@@ -11,7 +11,7 @@ This version enables:
 * Removal of DebuggerStepThrough attribute
 
 Usage:
-xsd2.exe <schema file> [/o:<output-directory>] [/ns:<namespace>]
+xsd2.exe <schema file> [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt;]
 
 Note:
 PetaTest framework is used for testing.
