@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xsd2", "Xsd2\Xsd2.csproj", "{DA8B62EC-38DE-4B74-842F-F61F29727797}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xsd2.Tests", "Xsd2.Tests\Xsd2.Tests.csproj", "{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA8B62EC-38DE-4B74-842F-F61F29727797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA8B62EC-38DE-4B74-842F-F61F29727797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA8B62EC-38DE-4B74-842F-F61F29727797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA8B62EC-38DE-4B74-842F-F61F29727797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

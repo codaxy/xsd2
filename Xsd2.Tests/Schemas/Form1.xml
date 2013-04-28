@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<form xmlns="http://example.org/Form.xsd">
+  <items>
+    <field name="x" align="left" minLength="1" label ="label" write="true" />
+    <field name="y"  />
+  </items>  
+</form>

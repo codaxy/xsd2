@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Form"
+    targetNamespace="http://example.org/Form.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://example.org/Form.xsd"
+    xmlns:mstns="http://example.org/Form.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:element name="element" abstract="true"></xs:element>
+
+  <xs:complexType name="Element">
+
+  </xs:complexType>
+
+  <xs:simpleType name="StringList">
+    <xs:list itemType="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="Align">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="auto"/>
+      <xs:enumeration value="left"/>
+      <xs:enumeration value="center"/>
+      <xs:enumeration value="right"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Field">
+    <xs:complexContent>
+      <xs:extension base="Element">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="label" type="xs:string" use="optional" />
+        <xs:attribute name="minLength" type="xs:int" use="optional" />
+        <xs:attribute name="write" type="xs:boolean" default="false" />
+        <xs:attribute name="align" type="Align" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="field" substitutionGroup="element" type="Field"/>
+
+  <xs:complexType name="Container">
+    <xs:complexContent>
+      <xs:extension base="Element">
+        <xs:sequence>
+          <xs:element ref="element" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Form">
+
+    <xs:sequence>      
+      <xs:element name="items" type="Container" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+    <xs:attribute name="name" use="optional"></xs:attribute>
+    <xs:attribute name="description" use="optional"></xs:attribute>
+  </xs:complexType>
+  
+  <xs:element name="form" type="Form" />
+</xs:schema>
