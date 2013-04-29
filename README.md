@@ -11,7 +11,7 @@ This version enables:
 * Removal of DebuggerStepThrough attribute
 
 Usage:
-xsd2.exe <schema file> [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt;]
+xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt;]
 
 Notes:
 
