@@ -6,7 +6,7 @@ Improved version of xsd.exe.
 This version enables:
 
 * List collections in generated types
-* Auto-apitalization of properties
+* Auto-capitalization of properties
 * Nullable attribute types
 * Removal of DebuggerStepThrough attribute
 
