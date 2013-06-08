@@ -5,13 +5,13 @@ Improved version of xsd.exe.
 
 This version enables:
 
-* List collections in generated types
+* List based collections in generated types
 * Auto-capitalization of properties
 * Nullable attribute types
 * Removal of DebuggerStepThrough attribute
 
 Usage:
-xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt;]
+xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt;] /all
 
 Notes:
 

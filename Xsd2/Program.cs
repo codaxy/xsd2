@@ -22,11 +22,11 @@ namespace Xsd2
 
                 var options = new XsdCodeGeneratorOptions
                 {
-                    UseNullableTypes = true,
+                    UseNullableTypes = false,
                     OutputNamespace = "Xsd2",
-                    UseLists = true,
-                    CapitalizeProperties = true,
-                    StripDebuggerStepThroughAttribute = true
+                    UseLists = false,
+                    CapitalizeProperties = false,
+                    StripDebuggerStepThroughAttribute = false
                 };
 
                 var generator = new XsdCodeGenerator() { Options = options };
@@ -38,21 +38,47 @@ namespace Xsd2
                         inputs.Add(arg);
                     else
                     {
+                        String option, value;
                         var colonIndex = arg.IndexOf(':');
                         if (colonIndex == -1)
-                            throw new InvalidOperationException("Invalid argument: " + arg);
-                        
-                        var option = arg.Substring(0, colonIndex + 1);
-                        var value = arg.Substring(colonIndex + 1);
-                        
+                        {
+                            option = arg;
+                            value = null;
+                        }
+                        else
+                        {
+                            option = arg.Substring(0, colonIndex + 1);
+                            value = arg.Substring(colonIndex + 1);
+                        }
+
                         switch (option.ToLower())
                         {
                             case "/o:":
+                            case "/output:":
                                 outputDirectory = value;
                                 break;
+                            case "/lists":
+                                options.UseLists = true;
+                                break;
+
+                            case "/strip-debug-attributes":
+                                options.StripDebuggerStepThroughAttribute = true;
+                                break;
+
+                            case "/capitalize":
+                                options.CapitalizeProperties = true;
+                                break;
+
                             case "/ns:":
                             case "/namespace:":
                                 options.OutputNamespace = value;
+                                break;
+
+                            case "/all":
+                                options.CapitalizeProperties = true;
+                                options.StripDebuggerStepThroughAttribute = true;
+                                options.UseLists = true;
+                                options.UseNullableTypes = true;
                                 break;
                         }
                     }

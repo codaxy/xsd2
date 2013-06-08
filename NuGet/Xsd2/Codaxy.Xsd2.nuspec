@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata schemaVersion="2">
+    <id>Codaxy.Xsd2</id>    
+    <title>Xsd2 code generator</title>
+    <version>0.9.3</version>
+    <authors>Codaxy</authors>
+    <description>XSD.exe based code generator with enhancements such as nullable types support, property capitalization, list types, debuging.</description>
+	<projectUrl>https://github.com/codaxy/xsd2</projectUrl>
+	<dependencies />		
+   </metadata>
+</package>
