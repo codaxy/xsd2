@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Xsd2Config"
+    targetNamespace="http://tempuri.org/Xsd2Config.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/Xsd2Config.xsd"
+    xmlns:mstns="http://tempuri.org/Xsd2Config.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:meta="http://codaxy.com/meta/MetaConfig.xsd"
+>
+  <xs:import namespace="http://codaxy.com/meta/MetaConfig.xsd" />  
+
+  <xs:complexType name="Xsd2Config">
+    <xs:complexContent>
+      <xs:extension base="meta:MetaTaskConfig">
+        <xs:attribute name="namespace"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="xsd2" substitutionGroup="meta:task" type="Xsd2Config" />
+  
+</xs:schema>

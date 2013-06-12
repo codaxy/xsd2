@@ -26,7 +26,8 @@ namespace Xsd2
                     OutputNamespace = "Xsd2",
                     UseLists = false,
                     CapitalizeProperties = false,
-                    StripDebuggerStepThroughAttribute = false
+                    StripDebuggerStepThroughAttribute = false,
+                    Imports = new List<string>()
                 };
 
                 var generator = new XsdCodeGenerator() { Options = options };
@@ -72,6 +73,10 @@ namespace Xsd2
                             case "/ns:":
                             case "/namespace:":
                                 options.OutputNamespace = value;
+                                break;
+
+                            case "/import:":
+                                options.Imports.Add(value);
                                 break;
 
                             case "/all":

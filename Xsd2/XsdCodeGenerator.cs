@@ -9,6 +9,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 using System.IO;
+using System.Diagnostics;
 
 namespace Xsd2
 {
@@ -16,17 +17,8 @@ namespace Xsd2
     {
         public XsdCodeGeneratorOptions Options { get; set; }
 
-        //static readonly HashSet<String> nullableTypes = new HashSet<string>() { 
-        //    "System.Int32", 
-        //    "System.Boolean", 
-        //    "int", 
-        //    "bool", 
-        //    "System.DateTime", 
-        //    "System.Double", 
-        //    "System.Decimal", 
-        //    "System.Float", 
-        //    "System.Timestamp" 
-        //};
+        XmlSchemas xsds = new XmlSchemas();
+        HashSet<XmlSchema> importedSchemas = new HashSet<XmlSchema>();
 
         public void Generate(Stream xsdInput, TextWriter output)
         {
@@ -40,12 +32,31 @@ namespace Xsd2
                     UseNullableTypes = true
                 };
 
-            XmlSchema xsd = XmlSchema.Read(xsdInput, null);
+            if (Options.Imports != null)
+            {
+                foreach (var import in Options.Imports)
+                {
+                    if (File.Exists(import))
+                    {
+                        ImportImportedSchema(import);
+                    }
+                    else if (Directory.Exists(import))
+                    {
+                        foreach (var file in Directory.GetFiles("*.xsd"))
+                            ImportImportedSchema(file);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(String.Format("Import '{0}' is not a file nor a directory.", import));
+                    }
+                }
+            }
 
-            XmlSchemas xsds = new XmlSchemas();
-
+            XmlSchema xsd = XmlSchema.Read(xsdInput, null);            
             xsds.Add(xsd);
+            
             xsds.Compile(null, true);
+            
             XmlSchemaImporter schemaImporter = new XmlSchemaImporter(xsds);
           
 
@@ -53,10 +64,11 @@ namespace Xsd2
             CodeNamespace codeNamespace = new CodeNamespace(Options.OutputNamespace);
             XmlCodeExporter codeExporter = new XmlCodeExporter(codeNamespace);
 
-            List<XmlTypeMapping> maps = new List<XmlTypeMapping>();            
+            List<XmlTypeMapping> maps = new List<XmlTypeMapping>();
             foreach (XmlSchemaElement schemaElement in xsd.Elements.Values)
             {
-                maps.Add(schemaImporter.ImportTypeMapping(schemaElement.QualifiedName));
+                if (!ElementBelongsToImportedSchema(schemaElement))
+                    maps.Add(schemaImporter.ImportTypeMapping(schemaElement.QualifiedName));
             }
             foreach (XmlTypeMapping map in maps)
             {
@@ -72,6 +84,32 @@ namespace Xsd2
             CSharpCodeProvider codeProvider = new CSharpCodeProvider();
 
             codeProvider.GenerateCodeFromNamespace(codeNamespace, output, new CodeGeneratorOptions());
+        }
+
+        private void ImportImportedSchema(string schemaFilePath)
+        {
+            using (var s = File.OpenRead(schemaFilePath))
+            {
+                var importedSchema = XmlSchema.Read(s, null);
+                xsds.Add(importedSchema);
+                importedSchemas.Add(importedSchema);
+            }
+        }
+
+        private bool ElementBelongsToImportedSchema(XmlSchemaElement element)
+        {
+            var node = element.Parent;
+            while (node != null)
+            {
+                if (node is XmlSchema)
+                {
+                    var schema = (XmlSchema)node;
+                    return importedSchemas.Contains(schema);
+                }
+                else
+                    node = node.Parent;
+            }
+            return false;
         }
 
         private void ImproveCodeDom(CodeNamespace codeNamespace)
@@ -208,6 +246,7 @@ namespace Xsd2
         public bool CapitalizeProperties { get; set; }
         public bool StripDebuggerStepThroughAttribute { get; set; }
         public bool UseNullableTypes { get; set; }
+        public List<String> Imports { get; set; }
         
         public string OutputNamespace { get; set; }
     }
