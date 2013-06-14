@@ -27,7 +27,9 @@ namespace Xsd2
                     UseLists = false,
                     CapitalizeProperties = false,
                     StripDebuggerStepThroughAttribute = false,
-                    Imports = new List<string>()
+                    ExcludeImportedTypes = false,
+                    Imports = new List<string>(),
+                    UsingNamespaces = new List<string>()
                 };
 
                 var generator = new XsdCodeGenerator() { Options = options };
@@ -58,10 +60,11 @@ namespace Xsd2
                             case "/output:":
                                 outputDirectory = value;
                                 break;
+
                             case "/lists":
                                 options.UseLists = true;
                                 break;
-
+                            
                             case "/strip-debug-attributes":
                                 options.StripDebuggerStepThroughAttribute = true;
                                 break;
@@ -70,6 +73,11 @@ namespace Xsd2
                                 options.CapitalizeProperties = true;
                                 break;
 
+                            case "/capitalize-enum-values":
+                                options.CapitalizeEnumValues = true;
+                                break;
+
+                            case "/n:":
                             case "/ns:":
                             case "/namespace:":
                                 options.OutputNamespace = value;
@@ -79,11 +87,22 @@ namespace Xsd2
                                 options.Imports.Add(value);
                                 break;
 
+                            case "/u:":
+                            case "/using:":
+                                options.UsingNamespaces.Add(value);
+                                break;
+
+                            case "/ei":
+                            case "/exclude-imports":
+                                options.ExcludeImportedTypes = true;
+                                break;
+
                             case "/all":
                                 options.CapitalizeProperties = true;
                                 options.StripDebuggerStepThroughAttribute = true;
                                 options.UseLists = true;
                                 options.UseNullableTypes = true;
+                                options.ExcludeImportedTypes = true;
                                 break;
                         }
                     }
@@ -93,7 +112,6 @@ namespace Xsd2
                 {
                     var fileInfo = new FileInfo(path);
                     var outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
-
 
                     Console.WriteLine(fileInfo.FullName);
                     Console.WriteLine(outputPath);

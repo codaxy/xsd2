@@ -21,11 +21,33 @@ namespace Xsd2.Tests
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true
+                StripDebuggerStepThroughAttribute = true,
+                ExcludeImportedTypes = true
             };
 
             using (var f = File.OpenRead(@"Schemas\Xsd2Config.xsd"))
             using (var o = File.CreateText(@"Schemas\Xsd2Config.cs"))
+            {
+                var generator = new XsdCodeGenerator() { Options = options };
+                generator.Generate(f, o);
+            }
+        }
+
+        [Test(Active=true)]
+        public void Test2()
+        {
+            var options = new XsdCodeGeneratorOptions
+            {                
+                CapitalizeProperties = true,
+                OutputNamespace = "XSD2",
+                UseLists = true,
+                UseNullableTypes = true,
+                StripDebuggerStepThroughAttribute = true,
+                ExcludeImportedTypes = true
+            };
+
+            using (var f = File.OpenRead(@"Schemas\Data.xsd"))
+            using (var o = File.CreateText(@"Schemas\Data.cs"))
             {
                 var generator = new XsdCodeGenerator() { Options = options };
                 generator.Generate(f, o);

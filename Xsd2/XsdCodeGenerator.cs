@@ -70,12 +70,23 @@ namespace Xsd2
                 if (!ElementBelongsToImportedSchema(schemaElement))
                     maps.Add(schemaImporter.ImportTypeMapping(schemaElement.QualifiedName));
             }
+
+            foreach (XmlSchemaComplexType schemaElement in xsd.Items.OfType<XmlSchemaComplexType>())
+            {
+                maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
+            }
+
+            foreach (XmlSchemaSimpleType schemaElement in xsd.Items.OfType<XmlSchemaSimpleType>())
+            {
+                maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
+            }
+
             foreach (XmlTypeMapping map in maps)
             {
                 codeExporter.ExportTypeMapping(map);
             }
 
-            ImproveCodeDom(codeNamespace);
+            ImproveCodeDom(codeNamespace, xsd);
 
             // Check for invalid characters in identifiers
             CodeGenerator.ValidateIdentifiers(codeNamespace);
@@ -112,13 +123,85 @@ namespace Xsd2
             return false;
         }
 
-        private void ImproveCodeDom(CodeNamespace codeNamespace)
+        /// <summary>
+        /// Shamelessly taken from Xsd2Code project
+        /// </summary>       
+        private bool ContainsTypeName(XmlSchema schema, CodeTypeDeclaration type)
+        {
+            foreach (var item in schema.Items)
+            {
+                var complexItem = item as XmlSchemaComplexType;
+                if (complexItem != null)
+                {
+                    if (complexItem.Name == type.Name)
+                    {
+                        return true;
+                    }
+                }
+
+                var simpleItem = item as XmlSchemaSimpleType;
+                if (simpleItem != null)
+                {
+                    if (simpleItem.Name == type.Name)
+                    {
+                        return true;
+                    }
+                }
+
+
+                var elementItem = item as XmlSchemaElement;
+                if (elementItem != null)
+                {
+                    if (elementItem.Name == type.Name)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            ////TODO: Does not work for combined anonymous types 
+            ////fallback: Check if the namespace attribute of the type equals the namespace of the file.
+            ////first, find the XmlType attribute.
+            //foreach (CodeAttributeDeclaration attribute in type.CustomAttributes)
+            //{
+            //    if (attribute.Name == "System.Xml.Serialization.XmlTypeAttribute")
+            //    {
+            //        foreach (CodeAttributeArgument argument in attribute.Arguments)
+            //        {
+            //            if (argument.Name == "Namespace")
+            //            {
+            //                if (((CodePrimitiveExpression)argument.Value).Value == schema.TargetNamespace)
+            //                {
+            //                    return true;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            return false;
+        }
+
+        private void ImproveCodeDom(CodeNamespace codeNamespace, XmlSchema schema)
         {
             codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
             codeNamespace.Imports.Add(new CodeNamespaceImport("System.Collections.Generic"));
 
+            if (Options.UsingNamespaces != null)
+                foreach (var ns in Options.UsingNamespaces)
+                    codeNamespace.Imports.Add(new CodeNamespaceImport(ns));
+
+            var removedTypes = new List<CodeTypeDeclaration>();
+
             foreach (CodeTypeDeclaration codeType in codeNamespace.Types)
             {
+                if (Options.ExcludeImportedTypes && Options.Imports != null && Options.Imports.Count > 0)
+                    if (!ContainsTypeName(schema, codeType))
+                    {
+                        removedTypes.Add(codeType);
+                        continue;
+                    }
+
                 if (Options.StripDebuggerStepThroughAttribute)
                 {
                     foreach (CodeAttributeDeclaration att in codeType.CustomAttributes)
@@ -146,6 +229,15 @@ namespace Xsd2
                             type.BaseType = "List<" + field.Type.BaseType + ">";
                             field.Type = type;
                         }
+
+                        if (codeType.IsEnum && Options.CapitalizeEnumValues)
+                        {
+                            if (Char.IsLower(member.Name[0]))
+                            {
+                                member.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlEnumAttribute", new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(member.Name) }));
+                                member.Name = Char.ToUpper(member.Name[0]) + member.Name.Substring(1);
+                            }
+                        }
                     }
                     if (member is CodeMemberProperty)
                     {
@@ -155,7 +247,7 @@ namespace Xsd2
                             CodeTypeReference type = new CodeTypeReference();
                             type.BaseType = "List<" + property.Type.BaseType + ">";
                             property.Type = type;
-                        }   
+                        }
 
                         if (Options.UseNullableTypes)
                         {
@@ -207,17 +299,18 @@ namespace Xsd2
                                 bool attributed = false;
                                 foreach (CodeAttributeDeclaration attribute in property.CustomAttributes)
                                 {
-                                    if (attribute.Name == "System.Xml.Serialization.XmlAttributeAttribute")
+                                    switch (attribute.Name)
                                     {
-                                        attributed = true;
-                                        attribute.Arguments.Add(new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) });
-                                        break;
-                                    }
+                                        case "System.Xml.Serialization.XmlAttributeAttribute":
+                                            attributed = true;
+                                            attribute.Arguments.Add(new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) });
+                                            break;
 
-                                    if (attribute.Name == "System.Xml.Serialization.XmlIgnoreAttribute")
-                                    {
-                                        attributed = true;
-                                        break;
+                                        case "System.Xml.Serialization.XmlIgnoreAttribute":
+                                        case "System.Xml.Serialization.XmlElementAttribute":
+                                        case "System.Xml.Serialization.XmlArrayItemAttribute":
+                                            attributed = true;
+                                            break;
                                     }
                                 }
 
@@ -227,11 +320,12 @@ namespace Xsd2
                                 property.Name = property.Name.Substring(0, 1).ToUpper() + property.Name.Substring(1);
                             }
                         }
-
-                        
                     }
                 }
             }
+
+            foreach (var rt in removedTypes)
+                codeNamespace.Types.Remove(rt);
         }
 
         private static string GetFieldName(string p, string suffix = null)
@@ -244,10 +338,14 @@ namespace Xsd2
     {
         public bool UseLists { get; set; }
         public bool CapitalizeProperties { get; set; }
+        public bool CapitalizeEnumValues { get; set; }
         public bool StripDebuggerStepThroughAttribute { get; set; }
         public bool UseNullableTypes { get; set; }
         public List<String> Imports { get; set; }
+        public List<String> UsingNamespaces { get; set; }
         
         public string OutputNamespace { get; set; }
+
+        public bool ExcludeImportedTypes { get; set; }
     }
 }
