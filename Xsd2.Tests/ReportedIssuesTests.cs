@@ -9,7 +9,7 @@ using PetaTest;
 
 namespace Xsd2.Tests
 {
-    [TestFixture(Active=true)]
+    [TestFixture(Active=false)]
     public class ReportedIssuesTests
     {
         [Test]
