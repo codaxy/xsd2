@@ -33,7 +33,7 @@ namespace Xsd2.Tests
             }
         }
 
-        [Test(Active=true)]
+        [Test(Active=false)]
         public void Test2()
         {
             var options = new XsdCodeGeneratorOptions

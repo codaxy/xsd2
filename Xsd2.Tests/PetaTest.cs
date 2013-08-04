@@ -84,6 +84,7 @@ namespace PetaTest
 
 	// Introducing "The Asserts" - all pretty self explanatory
 	[SkipInStackTrace]
+    [DebuggerStepThrough]
 	public static partial class Assert
 	{
 		public static void Throw(bool Condition, Func<string> message)

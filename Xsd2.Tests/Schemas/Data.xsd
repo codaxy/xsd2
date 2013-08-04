@@ -34,7 +34,7 @@
         <xs:attribute name="queryField" type="xs:string" use="optional"/>
         <xs:attribute name="disableFilter" type="xs:boolean" use="optional" default="false"/>        
         <xs:attribute name="audit" type="xs:boolean" default="false" />
-        <xs:attribute name="upsert" type="xs:boolean" use="optional" default="false" />
+        <xs:attribute name="upsert" type="xs:boolean" use="optional" default="false" />        
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

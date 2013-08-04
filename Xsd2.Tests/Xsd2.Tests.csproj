@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GenerationTests.cs" />
+    <Compile Include="ReportedIssuesTests.cs" />
     <Compile Include="PetaTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,9 +52,16 @@
       <DependentUpon>Form.xsd</DependentUpon>
     </Compile>
     <Compile Include="Schemas\form_xsd.cs" />
+    <Compile Include="Schemas\Issue12.cs">
+      <DependentUpon>Issue12.xsd</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Schemas\Issue12.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Schemas\Data.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -89,7 +97,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>REM "$(SolutionDir)Xsd2\$(OutDir)xsd2" "$(ProjectDir)schemas\form.xsd" /all</PreBuildEvent>
+    <PreBuildEvent>REM "$(SolutionDir)Xsd2\$(OutDir)xsd2" "$(ProjectDir)schemas\form.xsd" /all
+"$(SolutionDir)Xsd2\$(OutDir)xsd2" "$(ProjectDir)schemas\issue12.xsd" /all</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

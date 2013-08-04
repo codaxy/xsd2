@@ -16,6 +16,7 @@ namespace Xsd2
     public class XsdCodeGenerator
     {
         public XsdCodeGeneratorOptions Options { get; set; }
+        public Action<CodeNamespace, XmlSchema> OnValidateGeneratedCode { get; set; }
 
         XmlSchemas xsds = new XmlSchemas();
         HashSet<XmlSchema> importedSchemas = new HashSet<XmlSchema>();
@@ -87,6 +88,9 @@ namespace Xsd2
             }
 
             ImproveCodeDom(codeNamespace, xsd);
+
+            if (OnValidateGeneratedCode != null)
+                OnValidateGeneratedCode(codeNamespace, xsd);
 
             // Check for invalid characters in identifiers
             CodeGenerator.ValidateIdentifiers(codeNamespace);
@@ -251,9 +255,9 @@ namespace Xsd2
 
                         if (Options.UseNullableTypes)
                         {
-                            var fieldName = GetFieldName(property.Name);
+                            var fieldName = GetFieldName(property.Name, "Field");
                             CodeTypeMember specified;
-                            if (members.TryGetValue(fieldName + "Specified", out specified))
+                            if (members.TryGetValue(property.Name + "Specified", out specified))
                             {
                                 var nullableProperty = new CodeMemberProperty
                                 {
@@ -265,17 +269,17 @@ namespace Xsd2
                                 };
 
                                 nullableProperty.GetStatements.Add(
-                                    new CodeConditionStatement(new CodeVariableReferenceExpression(fieldName + "FieldSpecified"),
-                                    new[] { new CodeMethodReturnStatement(new CodeVariableReferenceExpression(fieldName + "Field")) },
+                                    new CodeConditionStatement(new CodeVariableReferenceExpression(fieldName + "Specified"),
+                                    new[] { new CodeMethodReturnStatement(new CodeVariableReferenceExpression(fieldName)) },
                                     new[] { new CodeMethodReturnStatement(new CodePrimitiveExpression()) }
                                     ));
 
                                 nullableProperty.SetStatements.Add(
                                     new CodeConditionStatement(new CodeSnippetExpression("value != null"),
-                                    new[] { new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName+"FieldSpecified"), new CodePrimitiveExpression(true)),
-                                        new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName+"Field"), new CodeSnippetExpression("value.Value")),
+                                    new[] { new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName+"Specified"), new CodePrimitiveExpression(true)),
+                                        new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName), new CodeSnippetExpression("value.Value")),
                                     },
-                                    new[] { new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName + "FieldSpecified"), new CodePrimitiveExpression(false)) }
+                                    new[] { new CodeAssignStatement(new CodeVariableReferenceExpression(fieldName + "Specified"), new CodePrimitiveExpression(false)) }
                                 ));
 
                                 nullableProperty.CustomAttributes.Add(new CodeAttributeDeclaration { Name = "System.Xml.Serialization.XmlIgnoreAttribute" });
@@ -284,7 +288,7 @@ namespace Xsd2
 
                                 foreach (CodeAttributeDeclaration attribute in property.CustomAttributes)
                                     if (attribute.Name == "System.Xml.Serialization.XmlAttributeAttribute")
-                                        attribute.Arguments.Add(new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) });
+                                        attribute.Arguments.Add(new CodeAttributeArgument { Name = "AttributeName", Value = new CodePrimitiveExpression(property.Name) });
 
                                 property.Name = "_" + property.Name;
                                 specified.Name = "_" + specified.Name;
