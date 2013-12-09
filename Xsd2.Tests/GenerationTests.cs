@@ -54,5 +54,27 @@ namespace Xsd2.Tests
             }
         }
 
+        [Test(Active = true)]
+        public void Test3()
+        {
+            var options = new XsdCodeGeneratorOptions
+            {
+                CapitalizeProperties = true,
+                OutputNamespace = "XSD2",
+                UseLists = true,
+                UseNullableTypes = true,
+                StripDebuggerStepThroughAttribute = true,
+                ExcludeImportedTypes = true,
+                MixedContent = true
+            };
+
+            using (var f = File.OpenRead(@"Schemas\Form.xsd"))
+            using (var o = File.CreateText(@"Schemas\Form.cs"))
+            {
+                var generator = new XsdCodeGenerator() { Options = options };
+                generator.Generate(f, o);
+            }
+        }
+
     }
 }

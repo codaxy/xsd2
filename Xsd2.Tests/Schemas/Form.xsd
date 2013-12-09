@@ -49,6 +49,16 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="MixedContainer" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Element">
+        <xs:sequence>
+          <xs:element ref="element" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="Form">
 
     <xs:sequence>      

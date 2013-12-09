@@ -27,6 +27,7 @@ namespace Xsd2
                     UseLists = false,
                     CapitalizeProperties = false,
                     StripDebuggerStepThroughAttribute = false,
+                    MixedContent = false,
                     ExcludeImportedTypes = false,
                     Imports = new List<string>(),
                     UsingNamespaces = new List<string>()
@@ -77,6 +78,10 @@ namespace Xsd2
                                 options.CapitalizeEnumValues = true;
                                 break;
 
+                            case "/mixed":
+                                options.MixedContent = true;
+                                break;
+
                             case "/n:":
                             case "/ns:":
                             case "/namespace:":
@@ -103,6 +108,7 @@ namespace Xsd2
                                 options.UseLists = true;
                                 options.UseNullableTypes = true;
                                 options.ExcludeImportedTypes = true;
+                                options.MixedContent = true;
                                 break;
                         }
                     }

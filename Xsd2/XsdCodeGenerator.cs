@@ -222,11 +222,27 @@ namespace Xsd2
                 foreach (CodeTypeMember member in codeType.Members)
                     members[member.Name] = member;
 
+                bool mixedContentDetected = Options.MixedContent && members.ContainsKey("textField") && members.ContainsKey("itemsField");
+
                 foreach (CodeTypeMember member in members.Values)
                 {
                     if (member is CodeMemberField)
                     {
                         CodeMemberField field = (CodeMemberField)member;
+
+                        if (mixedContentDetected)
+                        {
+                            switch (field.Name)
+                            {
+                                case "textField":
+                                    codeType.Members.Remove(member);
+                                    continue;
+                                case "itemsField":
+                                    field.Type = new CodeTypeReference("System.Object[]");
+                                    break;
+                            }
+                        }
+
                         if (Options.UseLists && field.Type.ArrayRank > 0)
                         {
                             CodeTypeReference type = new CodeTypeReference();
@@ -243,9 +259,25 @@ namespace Xsd2
                             }
                         }
                     }
+
                     if (member is CodeMemberProperty)
                     {
                         CodeMemberProperty property = (CodeMemberProperty)member;
+
+                        if (mixedContentDetected)
+                        {
+                            switch (property.Name)
+                            {
+                                case "Text":
+                                    codeType.Members.Remove(member);
+                                    continue;
+                                case "Items":
+                                    property.Type = new CodeTypeReference("System.Object[]");
+                                    property.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlTextAttribute", new CodeAttributeArgument { Name = "", Value = new CodeTypeOfExpression(new CodeTypeReference("System.String")) }));
+                                    break;
+                            }
+                        }
+
                         if (Options.UseLists && property.Type.ArrayRank > 0)
                         {
                             CodeTypeReference type = new CodeTypeReference();
@@ -351,5 +383,7 @@ namespace Xsd2
         public string OutputNamespace { get; set; }
 
         public bool ExcludeImportedTypes { get; set; }
+
+        public bool MixedContent { get; set; }
     }
 }
