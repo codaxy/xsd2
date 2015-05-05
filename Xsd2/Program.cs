@@ -102,6 +102,12 @@ namespace Xsd2
                                 options.ExcludeImportedTypes = true;
                                 break;
 
+                            case "/ein":
+                            case "/exclude-imports-by-name":
+                                options.ExcludeImportedTypes = true;
+                                options.ExcludeImportedTypesByNameAndNamespace = true;
+                                break;
+
                             case "/all":
                                 options.CapitalizeProperties = true;
                                 options.StripDebuggerStepThroughAttribute = true;
