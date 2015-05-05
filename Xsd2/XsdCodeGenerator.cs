@@ -132,6 +132,16 @@ namespace Xsd2
         /// </summary>       
         private bool ContainsTypeName(XmlSchema schema, CodeTypeDeclaration type)
         {
+            //TODO: Does not work for combined anonymous types 
+            //fallback: Check if the namespace attribute of the type equals the namespace of the file.
+            //first, find the XmlType attribute.
+            var ns = ExtractNamespace(type);
+            if (ns!=null && ns != schema.TargetNamespace)
+                return false;
+
+            if (!Options.ExcludeImportedTypesByNameAndNamespace)
+                return true;
+
             foreach (var item in schema.Items)
             {
                 var complexItem = item as XmlSchemaComplexType;
@@ -163,27 +173,26 @@ namespace Xsd2
                 }
             }
 
-            ////TODO: Does not work for combined anonymous types 
-            ////fallback: Check if the namespace attribute of the type equals the namespace of the file.
-            ////first, find the XmlType attribute.
-            //foreach (CodeAttributeDeclaration attribute in type.CustomAttributes)
-            //{
-            //    if (attribute.Name == "System.Xml.Serialization.XmlTypeAttribute")
-            //    {
-            //        foreach (CodeAttributeArgument argument in attribute.Arguments)
-            //        {
-            //            if (argument.Name == "Namespace")
-            //            {
-            //                if (((CodePrimitiveExpression)argument.Value).Value == schema.TargetNamespace)
-            //                {
-            //                    return true;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
             return false;
+        }
+
+        private String ExtractNamespace(CodeTypeDeclaration type)
+        {
+            foreach (CodeAttributeDeclaration attribute in type.CustomAttributes)
+            {
+                if (attribute.Name == "System.Xml.Serialization.XmlTypeAttribute")
+                {
+                    foreach (CodeAttributeArgument argument in attribute.Arguments)
+                    {
+                        if (argument.Name == "Namespace")
+                        {
+                           return (string)((CodePrimitiveExpression)argument.Value).Value;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void ImproveCodeDom(CodeNamespace codeNamespace, XmlSchema schema)
@@ -383,6 +392,8 @@ namespace Xsd2
         public string OutputNamespace { get; set; }
 
         public bool ExcludeImportedTypes { get; set; }
+
+        public bool ExcludeImportedTypesByNameAndNamespace { get; set; }
 
         public bool MixedContent { get; set; }
     }
