@@ -36,6 +36,8 @@ namespace Xsd2
                 var generator = new XsdCodeGenerator() { Options = options };
                 String outputDirectory = null;
 
+                var combine = false;
+
                 foreach (var arg in args)
                 {
                     if (!arg.StartsWith("/"))
@@ -65,7 +67,7 @@ namespace Xsd2
                             case "/lists":
                                 options.UseLists = true;
                                 break;
-                            
+
                             case "/strip-debug-attributes":
                                 options.StripDebuggerStepThroughAttribute = true;
                                 break;
@@ -108,6 +110,10 @@ namespace Xsd2
                                 options.ExcludeImportedTypesByNameAndNamespace = true;
                                 break;
 
+                            case "/nullable":
+                                options.UseNullableTypes = true;
+                                break;
+
                             case "/all":
                                 options.CapitalizeProperties = true;
                                 options.StripDebuggerStepThroughAttribute = true;
@@ -116,22 +122,46 @@ namespace Xsd2
                                 options.ExcludeImportedTypes = true;
                                 options.MixedContent = true;
                                 break;
+
+                            case "/combine":
+                                combine = true;
+                                break;
                         }
                     }
                 }
 
-                foreach (var path in inputs)
+                if (combine)
                 {
-                    var fileInfo = new FileInfo(path);
-                    var outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+                    String outputPath = null;
+                    foreach (var path in inputs)
+                    {
+                        var fileInfo = new FileInfo(path);
 
-                    Console.WriteLine(fileInfo.FullName);
+                        if (outputPath == null)
+                            outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+
+                        Console.WriteLine(fileInfo.FullName);
+                    }
+
                     Console.WriteLine(outputPath);
 
-                    using (var input = fileInfo.OpenRead())
                     using (var output = File.CreateText(outputPath))
-                        generator.Generate(input, output);
-                }               
+                        generator.Generate(inputs, output);
+                }
+                else
+                {
+                    foreach (var path in inputs)
+                    {
+                        var fileInfo = new FileInfo(path);
+                        var outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+
+                        Console.WriteLine(fileInfo.FullName);
+                        Console.WriteLine(outputPath);
+
+                        using (var output = File.CreateText(outputPath))
+                            generator.Generate(new[] { path }, output);
+                    }
+                }         
             }
             catch (Exception ex)
             {

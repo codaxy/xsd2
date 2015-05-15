@@ -24,12 +24,11 @@ namespace Xsd2.Tests
                 StripDebuggerStepThroughAttribute = true,
                 ExcludeImportedTypes = true
             };
-
-            using (var f = File.OpenRead(@"Schemas\Xsd2Config.xsd"))
+            
             using (var o = File.CreateText(@"Schemas\Xsd2Config.cs"))
             {
                 var generator = new XsdCodeGenerator() { Options = options };
-                generator.Generate(f, o);
+                generator.Generate(new[] { @"Schemas\Xsd2Config.xsd" }, o);
             }
         }
 
@@ -46,11 +45,10 @@ namespace Xsd2.Tests
                 ExcludeImportedTypes = true
             };
 
-            using (var f = File.OpenRead(@"Schemas\Data.xsd"))
             using (var o = File.CreateText(@"Schemas\Data.cs"))
             {
                 var generator = new XsdCodeGenerator() { Options = options };
-                generator.Generate(f, o);
+                generator.Generate(new[] { @"Schemas\Data.xsd" }, o);
             }
         }
 
@@ -67,12 +65,11 @@ namespace Xsd2.Tests
                 ExcludeImportedTypes = true,
                 MixedContent = true
             };
-
-            using (var f = File.OpenRead(@"Schemas\Form.xsd"))
+            
             using (var o = File.CreateText(@"Schemas\Form.cs"))
             {
                 var generator = new XsdCodeGenerator() { Options = options };
-                generator.Generate(f, o);
+                generator.Generate(new[] { @"Schemas\Form.xsd" }, o);
             }
         }
 

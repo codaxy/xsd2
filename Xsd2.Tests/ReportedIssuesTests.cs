@@ -24,8 +24,7 @@ namespace Xsd2.Tests
                 StripDebuggerStepThroughAttribute = true,
                 ExcludeImportedTypes = true
             };
-
-            using (var f = File.OpenRead(@"Schemas\Issue12.xsd"))
+            
             using (var o = File.CreateText(@"Schemas\Issue12.cs"))
             {
                 var generator = new XsdCodeGenerator()
@@ -38,7 +37,7 @@ namespace Xsd2.Tests
                         Assert.IsTrue(valueProp.Type.BaseType.Contains("Nullable"));
                     }
                 };
-                generator.Generate(f, o);
+                generator.Generate(new[] { @"Schemas\Issue12.xsd" }, o);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace Xsd2
         XmlSchemas xsds = new XmlSchemas();
         HashSet<XmlSchema> importedSchemas = new HashSet<XmlSchema>();
 
-        public void Generate(Stream xsdInput, TextWriter output)
+        public void Generate(IList<String> schemas, TextWriter output)
         {
             if (Options == null)
                 Options = new XsdCodeGeneratorOptions
@@ -53,8 +53,17 @@ namespace Xsd2
                 }
             }
 
-            XmlSchema xsd = XmlSchema.Read(xsdInput, null);            
-            xsds.Add(xsd);
+            var inputs = new List<XmlSchema>();
+
+            foreach (var path in schemas)
+            {
+                using (var r = File.OpenText(path))
+                {
+                    XmlSchema xsd = XmlSchema.Read(r, null);
+                    xsds.Add(xsd);
+                    inputs.Add(xsd);
+                }
+            }
             
             xsds.Compile(null, true);
             
@@ -66,31 +75,37 @@ namespace Xsd2
             XmlCodeExporter codeExporter = new XmlCodeExporter(codeNamespace);
 
             List<XmlTypeMapping> maps = new List<XmlTypeMapping>();
-            foreach (XmlSchemaElement schemaElement in xsd.Elements.Values)
-            {
-                if (!ElementBelongsToImportedSchema(schemaElement))
-                    maps.Add(schemaImporter.ImportTypeMapping(schemaElement.QualifiedName));
-            }
+            foreach (var xsd in inputs)
+                foreach (XmlSchemaElement schemaElement in xsd.Elements.Values)
+                {
+                    if (!ElementBelongsToImportedSchema(schemaElement))
+                        maps.Add(schemaImporter.ImportTypeMapping(schemaElement.QualifiedName));
+                }
 
-            foreach (XmlSchemaComplexType schemaElement in xsd.Items.OfType<XmlSchemaComplexType>())
-            {
-                maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
-            }
 
-            foreach (XmlSchemaSimpleType schemaElement in xsd.Items.OfType<XmlSchemaSimpleType>())
-            {
-                maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
-            }
+            foreach (var xsd in inputs)
+                foreach (XmlSchemaComplexType schemaElement in xsd.Items.OfType<XmlSchemaComplexType>())
+                {
+                    maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
+                }
+
+            foreach (var xsd in inputs)
+                foreach (XmlSchemaSimpleType schemaElement in xsd.Items.OfType<XmlSchemaSimpleType>())
+                {
+                    maps.Add(schemaImporter.ImportSchemaType(schemaElement.QualifiedName));
+                }
 
             foreach (XmlTypeMapping map in maps)
             {
                 codeExporter.ExportTypeMapping(map);
             }
 
-            ImproveCodeDom(codeNamespace, xsd);
+            foreach (var xsd in inputs)
+                ImproveCodeDom(codeNamespace, xsd);
 
             if (OnValidateGeneratedCode != null)
-                OnValidateGeneratedCode(codeNamespace, xsd);
+                foreach (var xsd in inputs)
+                    OnValidateGeneratedCode(codeNamespace, xsd);
 
             // Check for invalid characters in identifiers
             CodeGenerator.ValidateIdentifiers(codeNamespace);
