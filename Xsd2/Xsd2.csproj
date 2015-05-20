@@ -48,6 +48,10 @@
     <Compile Include="XsdCodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\NuGet\Xsd2\Codaxy.Xsd2.nuspec">
+      <Link>Codaxy.Xsd2.nuspec</Link>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
