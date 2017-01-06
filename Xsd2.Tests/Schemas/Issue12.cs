@@ -38,7 +38,7 @@ namespace Xsd2 {
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Nullable<System.Int32> Value {
+        public System.Nullable<int> Value {
             get {
                 if (valueFieldSpecified) {
                     return valueField;
@@ -48,7 +48,7 @@ namespace Xsd2 {
                 }
             }
             set {
-                if (value != null) {
+                if ((value != null)) {
                     valueFieldSpecified = true;
                     valueField = value.Value;
                 }
@@ -120,7 +120,7 @@ namespace Xsd2 {
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Nullable<System.Int32> Value {
+        public System.Nullable<int> Value {
             get {
                 if (valueFieldSpecified) {
                     return valueField;
@@ -130,7 +130,7 @@ namespace Xsd2 {
                 }
             }
             set {
-                if (value != null) {
+                if ((value != null)) {
                     valueFieldSpecified = true;
                     valueField = value.Value;
                 }
@@ -141,7 +141,7 @@ namespace Xsd2 {
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Nullable<System.DateTime> Date {
+        public System.Nullable<System.DateTime> Date {
             get {
                 if (dateFieldSpecified) {
                     return dateField;
@@ -151,7 +151,7 @@ namespace Xsd2 {
                 }
             }
             set {
-                if (value != null) {
+                if ((value != null)) {
                     dateFieldSpecified = true;
                     dateField = value.Value;
                 }

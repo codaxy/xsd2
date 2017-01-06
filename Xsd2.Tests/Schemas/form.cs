@@ -108,7 +108,7 @@ namespace Xsd2 {
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Nullable<System.Int32> MinLength {
+        public System.Nullable<int> MinLength {
             get {
                 if (minLengthFieldSpecified) {
                     return minLengthField;
@@ -118,7 +118,7 @@ namespace Xsd2 {
                 }
             }
             set {
-                if (value != null) {
+                if ((value != null)) {
                     minLengthFieldSpecified = true;
                     minLengthField = value.Value;
                 }
@@ -129,7 +129,7 @@ namespace Xsd2 {
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public Nullable<Align> Align {
+        public System.Nullable<Align> Align {
             get {
                 if (alignFieldSpecified) {
                     return alignField;
@@ -139,7 +139,7 @@ namespace Xsd2 {
                 }
             }
             set {
-                if (value != null) {
+                if ((value != null)) {
                     alignFieldSpecified = true;
                     alignField = value.Value;
                 }

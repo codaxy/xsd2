@@ -5,6 +5,11 @@ namespace Xsd2
 {
     public class XsdCodeGeneratorOptions
     {
+        public XsdCodeGeneratorOptions()
+        {
+            Language = XsdCodeGeneratorOutputLanguage.CS;
+        }
+
         public bool UseLists { get; set; }
         public bool CapitalizeProperties { get; set; }
         public bool CapitalizeEnumValues { get; set; }
@@ -15,6 +20,7 @@ namespace Xsd2
         public List<String> Imports { get; set; }
         public List<String> UsingNamespaces { get; set; }
 
+        public XsdCodeGeneratorOutputLanguage Language { get; set; }
         public string OutputNamespace { get; set; }
         public bool WriteFileHeader { get; set; }
         public bool PreserveOrder { get; set; }

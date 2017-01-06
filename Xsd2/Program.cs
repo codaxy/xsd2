@@ -32,6 +32,7 @@ namespace Xsd2
                 {
                     { "?|h|help", "Shows the help text", s => help = true },
                     { "o|out|output=", "Sets the output directory", s => outputDirectory = s },
+                    { "l|language=", "Sets the language to use for code generation (CS or VB)", s => options.Language = (XsdCodeGeneratorOutputLanguage)Enum.Parse(typeof(XsdCodeGeneratorOutputLanguage), s, true) },
                     { "header", "Write file header", s => options.WriteFileHeader = s != null },
                     { "order", "Preserve the element order", s => options.PreserveOrder = s != null },
                     { "edb|enableDataBinding", "Implements INotifyPropertyChanged for all types", s => options.EnableDataBinding = s != null },

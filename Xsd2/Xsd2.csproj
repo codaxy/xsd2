@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XsdCodeGenerator.cs" />
     <Compile Include="XsdCodeGeneratorOptions.cs" />
+    <Compile Include="XsdCodeGeneratorOutputLanguage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\NuGet\Xsd2\Codaxy.Xsd2.nuspec">
