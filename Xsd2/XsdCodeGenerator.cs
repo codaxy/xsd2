@@ -313,10 +313,9 @@ namespace Xsd2
                 foreach (CodeTypeMember member in codeType.Members)
                     members[member.Name] = member;
 
-                if (Options.EnableDataBinding && codeType.IsClass)
+                if (Options.EnableDataBinding && codeType.IsClass && codeType.BaseTypes.Count == 0)
                 {
-                    if (codeType.BaseTypes.Count == 0)
-                        codeType.BaseTypes.Add(typeof(object));
+                    codeType.BaseTypes.Add(typeof(object));
                     codeType.BaseTypes.Add(typeof(INotifyPropertyChanged));
 
                     codeType.Members.Add(new CodeMemberEvent()
