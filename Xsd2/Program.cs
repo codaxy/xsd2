@@ -1,25 +1,15 @@
 ﻿using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using Microsoft.CSharp;
 
 namespace Xsd2
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             try
             {
-                var inputs = new List<String>();
-
                 var options = new XsdCodeGeneratorOptions
                 {
                     UseNullableTypes = false,
@@ -33,102 +23,46 @@ namespace Xsd2
                     UsingNamespaces = new List<string>()
                 };
 
-                var generator = new XsdCodeGenerator() { Options = options };
                 String outputDirectory = null;
-
                 var combine = false;
+                string outputFileName = null;
+                var help = false;
 
-                foreach (var arg in args)
+                var optionSet = new Mono.Options.OptionSet()
                 {
-                    if (!arg.StartsWith("/"))
-                        inputs.Add(arg);
-                    else
-                    {
-                        String option, value;
-                        var colonIndex = arg.IndexOf(':');
-                        if (colonIndex == -1)
-                        {
-                            option = arg;
-                            value = null;
-                        }
-                        else
-                        {
-                            option = arg.Substring(0, colonIndex + 1);
-                            value = arg.Substring(colonIndex + 1);
-                        }
+                    { "?|h|help", "Shows the help text", s => help = true },
+                    { "o|out|output=", "Sets the output directory", s => outputDirectory = s },
+                    { "l|language=", "Sets the language to use for code generation (CS or VB)", s => options.Language = (XsdCodeGeneratorOutputLanguage)Enum.Parse(typeof(XsdCodeGeneratorOutputLanguage), s, true) },
+                    { "header", "Write file header", s => options.WriteFileHeader = s != null },
+                    { "order", "Preserve the element order", s => options.PreserveOrder = s != null },
+                    { "edb|enableDataBinding", "Implements INotifyPropertyChanged for all types", s => options.EnableDataBinding = s != null },
+                    { "lists", "Use lists", s => options.UseLists = s != null },
+                    { "strip-debug-attributes", "Strip debug attributes", s => options.StripDebuggerStepThroughAttribute = s != null },
+                    { "pcl", "Target a PCL", s => options.StripPclIncompatibleAttributes = s != null },
+                    { "capitalize", "Capitalize properties", s => options.CapitalizeProperties = s != null },
+                    { "capitalize-enum-values", "Capitalize enum values", s => options.CapitalizeEnumValues = s != null },
+                    { "mixed", "Support mixed content", s => options.MixedContent = s != null },
+                    { "n|ns|namespace=", "Sets the output namespace", s => options.OutputNamespace = s },
+                    { "import=", "Adds import", s => options.Imports.Add(s) },
+                    { "u|using=", "Adds a namespace to use", s => options.UsingNamespaces.Add(s) },
+                    { "ei|exclude-imports", "Exclude imported types", s => options.ExcludeImportedTypes = s != null },
+                    { "ein|exclude-imports-by-name", "Exclude imported types by name", s => options.ExcludeImportedTypes = options.ExcludeImportedTypesByNameAndNamespace = s != null },
+                    { "nullable", "Use nullable types", s => options.UseNullableTypes = options.HideUnderlyingNullableProperties = s != null },
+                    { "all", "Enable all flags", s => options.CapitalizeProperties = options.StripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null },
+                    { "combine:", "Combine output to a single file", s => { combine = true; outputFileName = s; } },
+                    { "c|classes", "Generates classes for the schema", s => { }, true },
+                    { "nologo", "Suppresses application banner", s => { }, true },
+                };
 
-                        switch (option.ToLower())
-                        {
-                            case "/o:":
-                            case "/output:":
-                                outputDirectory = value;
-                                break;
-
-                            case "/lists":
-                                options.UseLists = true;
-                                break;
-
-                            case "/strip-debug-attributes":
-                                options.StripDebuggerStepThroughAttribute = true;
-                                break;
-
-                            case "/capitalize":
-                                options.CapitalizeProperties = true;
-                                break;
-
-                            case "/capitalize-enum-values":
-                                options.CapitalizeEnumValues = true;
-                                break;
-
-                            case "/mixed":
-                                options.MixedContent = true;
-                                break;
-
-                            case "/n:":
-                            case "/ns:":
-                            case "/namespace:":
-                                options.OutputNamespace = value;
-                                break;
-
-                            case "/import:":
-                                options.Imports.Add(value);
-                                break;
-
-                            case "/u:":
-                            case "/using:":
-                                options.UsingNamespaces.Add(value);
-                                break;
-
-                            case "/ei":
-                            case "/exclude-imports":
-                                options.ExcludeImportedTypes = true;
-                                break;
-
-                            case "/ein":
-                            case "/exclude-imports-by-name":
-                                options.ExcludeImportedTypes = true;
-                                options.ExcludeImportedTypesByNameAndNamespace = true;
-                                break;
-
-                            case "/nullable":
-                                options.UseNullableTypes = true;
-                                break;
-
-                            case "/all":
-                                options.CapitalizeProperties = true;
-                                options.StripDebuggerStepThroughAttribute = true;
-                                options.UseLists = true;
-                                options.UseNullableTypes = true;
-                                options.ExcludeImportedTypes = true;
-                                options.MixedContent = true;
-                                break;
-
-                            case "/combine":
-                                combine = true;
-                                break;
-                        }
-                    }
+                var inputs = optionSet.Parse(args);
+                if (help || args.Length == 0 || inputs.Count == 0)
+                {
+                    Console.Error.WriteLine("Xsd2 [options] schema.xsd ...");
+                    optionSet.WriteOptionDescriptions(Console.Error);
+                    return 1;
                 }
+
+                var generator = new XsdCodeGenerator() { Options = options };
 
                 if (combine)
                 {
@@ -138,7 +72,11 @@ namespace Xsd2
                         var fileInfo = new FileInfo(path);
 
                         if (outputPath == null)
-                            outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+                        {
+                            if (string.IsNullOrEmpty(outputFileName))
+                                outputFileName = Path.ChangeExtension(fileInfo.Name, ".cs");
+                            outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, outputFileName);
+                        }
 
                         Console.WriteLine(fileInfo.FullName);
                     }
@@ -167,7 +105,10 @@ namespace Xsd2
             {
                 Console.Error.WriteLine("XSD2 code generation failed.");
                 Console.Error.Write(ex.ToString());
+                return 2;
             }
+
+            return 0;
         }
     }
 }
