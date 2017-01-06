@@ -25,14 +25,19 @@ namespace Xsd2
 
                 String outputDirectory = null;
                 var combine = false;
+                string outputFileName = null;
                 var help = false;
 
                 var optionSet = new Mono.Options.OptionSet()
                 {
                     { "?|h|help", "Shows the help text", s => help = true },
-                    { "o|output=", "Sets the output directory", s => outputDirectory = s },
+                    { "o|out|output=", "Sets the output directory", s => outputDirectory = s },
+                    { "header", "Write file header", s => options.WriteFileHeader = s != null },
+                    { "order", "Preserve the element order", s => options.PreserveOrder = s != null },
+                    { "edb|enableDataBinding", "Implements INotifyPropertyChanged for all types", s => options.EnableDataBinding = s != null },
                     { "lists", "Use lists", s => options.UseLists = s != null },
                     { "strip-debug-attributes", "Strip debug attributes", s => options.StripDebuggerStepThroughAttribute = s != null },
+                    { "pcl", "Target a PCL", s => options.StripPclIncompatibleAttributes = s != null },
                     { "capitalize", "Capitalize properties", s => options.CapitalizeProperties = s != null },
                     { "capitalize-enum-values", "Capitalize enum values", s => options.CapitalizeEnumValues = s != null },
                     { "mixed", "Support mixed content", s => options.MixedContent = s != null },
@@ -41,9 +46,11 @@ namespace Xsd2
                     { "u|using=", "Adds a namespace to use", s => options.UsingNamespaces.Add(s) },
                     { "ei|exclude-imports", "Exclude imported types", s => options.ExcludeImportedTypes = s != null },
                     { "ein|exclude-imports-by-name", "Exclude imported types by name", s => options.ExcludeImportedTypes = options.ExcludeImportedTypesByNameAndNamespace = s != null },
-                    { "nullable", "Use nullable types", s => options.UseNullableTypes = s != null },
+                    { "nullable", "Use nullable types", s => options.UseNullableTypes = options.HideUnderlyingNullableProperties = s != null },
                     { "all", "Enable all flags", s => options.CapitalizeProperties = options.StripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null },
-                    { "combine", "Combine output to a single file", s => combine = s != null }
+                    { "combine:", "Combine output to a single file", s => { combine = true; outputFileName = s; } },
+                    { "c|classes", "Generates classes for the schema", s => { }, true },
+                    { "nologo", "Suppresses application banner", s => { }, true },
                 };
 
                 var inputs = optionSet.Parse(args);
@@ -64,7 +71,11 @@ namespace Xsd2
                         var fileInfo = new FileInfo(path);
 
                         if (outputPath == null)
-                            outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+                        {
+                            if (string.IsNullOrEmpty(outputFileName))
+                                outputFileName = Path.ChangeExtension(fileInfo.Name, ".cs");
+                            outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, outputFileName);
+                        }
 
                         Console.WriteLine(fileInfo.FullName);
                     }
