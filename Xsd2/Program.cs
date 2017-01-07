@@ -17,7 +17,6 @@ namespace Xsd2
                     UseNullableTypes = false,
                     OutputNamespace = "Xsd2",
                     UseLists = false,
-                    StripDebuggerStepThroughAttribute = false,
                     MixedContent = false,
                     ExcludeImportedTypes = false,
                     Imports = new List<string>(),
@@ -29,6 +28,7 @@ namespace Xsd2
                 string outputFileName = null;
                 var help = false;
                 var pclTarget = false;
+                var stripDebuggerStepThroughAttribute = false;
 
                 var optionSet = new Mono.Options.OptionSet()
                 {
@@ -39,13 +39,14 @@ namespace Xsd2
                     { "order", "Preserve the element order", s => options.PreserveOrder = s != null },
                     { "edb|enableDataBinding", "Implements INotifyPropertyChanged for all types", s => options.EnableDataBinding = s != null },
                     { "lists", "Use lists", s => options.UseLists = s != null },
-                    { "strip-debug-attributes", "Strip debug attributes", s => options.StripDebuggerStepThroughAttribute = s != null },
+                    { "strip-debug-attributes", "Strip debug attributes", s => stripDebuggerStepThroughAttribute = s != null },
                     { "xl|xlinq", s => options.UseXLinq = s != null },
                     { "ra|remove-attribute=", s => options.AttributesToRemove.Add(s) },
                     { "pcl", "Target a PCL", s => pclTarget = s != null },
-                    { "cp|capitalize:", "Capitalize properties", s => options.PropertyNameCapitalizer = GetCapitalizer(s) },
-                    { "ct|capitalize-types:", "Capitalize types", s => options.TypeNameCapitalizer = GetCapitalizer(s) },
-                    { "ce|capitalize-enum-values:", "Capitalize enum values", s => options.EnumValueCapitalizer = GetCapitalizer(s) },
+                    { "cp|capitalize:", "Capitalize properties", (k, v) => options.PropertyNameCapitalizer = GetCapitalizer(k, v) },
+                    { "ca|capitalize-all:", "Capitalize properties, types, and enum vlaues", (k, v) => options.PropertyNameCapitalizer = options.EnumValueCapitalizer = options.TypeNameCapitalizer = GetCapitalizer(k, v) },
+                    { "ct|capitalize-types:", "Capitalize types", (k, v) => options.TypeNameCapitalizer = GetCapitalizer(k, v) },
+                    { "ce|capitalize-enum-values:", "Capitalize enum values", (k, v) => options.EnumValueCapitalizer = GetCapitalizer(k, v) },
                     { "mixed", "Support mixed content", s => options.MixedContent = s != null },
                     { "n|ns|namespace=", "Sets the output namespace", s => options.OutputNamespace = s },
                     { "import=", "Adds import", s => options.Imports.Add(s) },
@@ -55,7 +56,7 @@ namespace Xsd2
                     { "nullable", "Use nullable types", s => options.UseNullableTypes = options.HideUnderlyingNullableProperties = s != null },
                     { "all", "Enable all flags", s =>
                     {
-                        options.StripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null;
+                        stripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null;
                         options.PropertyNameCapitalizer = new FirstCharacterCapitalizer();
                     } },
                     { "combine:", "Combine output to a single file", s => { combine = true; outputFileName = s; } },
@@ -77,6 +78,9 @@ namespace Xsd2
                     options.AttributesToRemove.Add("System.SerializableAttribute");
                     options.AttributesToRemove.Add("System.ComponentModel.DesignerCategoryAttribute");
                 }
+
+                if (stripDebuggerStepThroughAttribute)
+                    options.AttributesToRemove.Add("System.Diagnostics.DebuggerStepThroughAttribute");
 
                 var generator = new XsdCodeGenerator() { Options = options };
 
@@ -127,12 +131,12 @@ namespace Xsd2
             return 0;
         }
 
-        private static ICapitalizer GetCapitalizer(string name)
+        private static ICapitalizer GetCapitalizer(string name, string argument)
         {
             if (string.IsNullOrEmpty(name))
                 return new FirstCharacterCapitalizer();
 
-            switch (name)
+            switch (name.ToLowerInvariant())
             {
                 case "first-character":
                 case "first-char":
@@ -140,6 +144,10 @@ namespace Xsd2
                     return new FirstCharacterCapitalizer();
                 case "none":
                     return new NoneCapitalizer();
+                case "word":
+                    if (!string.IsNullOrEmpty(argument))
+                        return new WordCapitalizer(Convert.ToInt32(argument));
+                    return new WordCapitalizer();
             }
             
             throw new NotSupportedException(string.Format("There is no capitalizer associated with the name {0}", name));

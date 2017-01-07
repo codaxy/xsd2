@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="Capitalizers\FirstCharacterCapitalizer.cs" />
     <Compile Include="Capitalizers\NoneCapitalizer.cs" />
+    <Compile Include="Capitalizers\WordCapitalizer.cs" />
+    <Compile Include="CodeDomExtensions.cs" />
     <Compile Include="ICapitalizer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

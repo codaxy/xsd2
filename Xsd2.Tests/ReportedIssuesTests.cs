@@ -23,8 +23,11 @@ namespace Xsd2.Tests
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
-                ExcludeImportedTypes = true
+                ExcludeImportedTypes = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
             
             using (var o = File.CreateText(@"Schemas\Issue12.cs"))

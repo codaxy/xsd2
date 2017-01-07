@@ -1,10 +1,12 @@
-﻿namespace Xsd2.Capitalizers
+﻿using System.CodeDom;
+
+namespace Xsd2.Capitalizers
 {
     public class NoneCapitalizer : ICapitalizer
     {
-        public string Capitalize(string name)
+        public string Capitalize(CodeNamespace codeNamespace, CodeTypeMember member)
         {
-            return name;
+            return member.Name;
         }
     }
 }

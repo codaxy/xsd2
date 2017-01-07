@@ -19,7 +19,6 @@ namespace Xsd2
         public HashSet<string> AttributesToRemove { get; set; }
         public bool UseXLinq { get; set; }
         public bool UseLists { get; set; }
-        public bool StripDebuggerStepThroughAttribute { get; set; }
         public bool HideUnderlyingNullableProperties { get; set; }
         public bool UseNullableTypes { get; set; }
         public List<String> Imports { get; set; }

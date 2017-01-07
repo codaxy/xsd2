@@ -1,7 +1,9 @@
-﻿namespace Xsd2
+﻿using System.CodeDom;
+
+namespace Xsd2
 {
     public interface ICapitalizer
     {
-        string Capitalize(string name);
+        string Capitalize(CodeNamespace codeNamespace, CodeTypeMember member);
     }
 }

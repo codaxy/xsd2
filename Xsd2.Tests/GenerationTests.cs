@@ -18,13 +18,16 @@ namespace Xsd2.Tests
         {
             var options = new XsdCodeGeneratorOptions
             {
-                Imports = new List<string>() { @"Schemas\MetaConfig.xsd" },
+                Imports = new List<string>() {@"Schemas\MetaConfig.xsd"},
                 PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
-                ExcludeImportedTypes = true
+                ExcludeImportedTypes = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
             
             using (var o = File.CreateText(@"Schemas\Xsd2Config.cs"))
@@ -43,8 +46,11 @@ namespace Xsd2.Tests
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
-                ExcludeImportedTypes = true
+                ExcludeImportedTypes = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
 
             using (var o = File.CreateText(@"Schemas\Data.cs"))
@@ -63,9 +69,12 @@ namespace Xsd2.Tests
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
                 ExcludeImportedTypes = true,
-                MixedContent = true
+                MixedContent = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
             
             using (var o = File.CreateText(@"Schemas\Form.cs"))
