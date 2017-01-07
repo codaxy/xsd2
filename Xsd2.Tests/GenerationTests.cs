@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using PetaTest;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2.Tests
 {
     [TestFixture]
@@ -16,13 +18,16 @@ namespace Xsd2.Tests
         {
             var options = new XsdCodeGeneratorOptions
             {
-                Imports = new List<string>() { @"Schemas\MetaConfig.xsd" },
-                CapitalizeProperties = true,
+                Imports = new List<string>() {@"Schemas\MetaConfig.xsd"},
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
-                ExcludeImportedTypes = true
+                ExcludeImportedTypes = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
             
             using (var o = File.CreateText(@"Schemas\Xsd2Config.cs"))
@@ -36,13 +41,16 @@ namespace Xsd2.Tests
         public void Test2()
         {
             var options = new XsdCodeGeneratorOptions
-            {                
-                CapitalizeProperties = true,
+            {
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
-                ExcludeImportedTypes = true
+                ExcludeImportedTypes = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
 
             using (var o = File.CreateText(@"Schemas\Data.cs"))
@@ -57,13 +65,16 @@ namespace Xsd2.Tests
         {
             var options = new XsdCodeGeneratorOptions
             {
-                CapitalizeProperties = true,
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
-                StripDebuggerStepThroughAttribute = true,
                 ExcludeImportedTypes = true,
-                MixedContent = true
+                MixedContent = true,
+                AttributesToRemove =
+                {
+                    "System.Diagnostics.DebuggerStepThroughAttribute"
+                }
             };
             
             using (var o = File.CreateText(@"Schemas\Form.cs"))
