@@ -82,6 +82,17 @@ namespace Xsd2
                 if (stripDebuggerStepThroughAttribute)
                     options.AttributesToRemove.Add("System.Diagnostics.DebuggerStepThroughAttribute");
 
+                string outputFileExtension;
+                switch (options.Language)
+                {
+                    case XsdCodeGeneratorOutputLanguage.VB:
+                        outputFileExtension = ".vb";
+                        break;
+                    default:
+                        outputFileExtension = ".cs";
+                        break;
+                }
+
                 var generator = new XsdCodeGenerator() { Options = options };
 
                 if (combine)
@@ -94,7 +105,7 @@ namespace Xsd2
                         if (outputPath == null)
                         {
                             if (string.IsNullOrEmpty(outputFileName))
-                                outputFileName = Path.ChangeExtension(fileInfo.Name, ".cs");
+                                outputFileName = Path.ChangeExtension(fileInfo.Name, outputFileExtension);
                             outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, outputFileName);
                         }
 
@@ -111,7 +122,7 @@ namespace Xsd2
                     foreach (var path in inputs)
                     {
                         var fileInfo = new FileInfo(path);
-                        var outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, ".cs"));
+                        var outputPath = Path.Combine(outputDirectory ?? fileInfo.DirectoryName, Path.ChangeExtension(fileInfo.Name, outputFileExtension));
 
                         Console.WriteLine(fileInfo.FullName);
                         Console.WriteLine(outputPath);
