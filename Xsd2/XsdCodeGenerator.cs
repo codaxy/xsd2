@@ -401,8 +401,14 @@ namespace Xsd2
 
                         if (Options.UseLists && field.Type.ArrayRank > 0)
                         {
-                            CodeTypeReference type = new CodeTypeReference();
-                            type.BaseType = "List<" + field.Type.BaseType + ">";
+                            CodeTypeReference type = new CodeTypeReference(typeof(List<>))
+                            {
+                                TypeArguments =
+                                {
+                                    field.Type
+                                }
+                            };
+
                             field.Type = type;
                         }
 
@@ -440,8 +446,14 @@ namespace Xsd2
 
                         if (Options.UseLists && property.Type.ArrayRank > 0)
                         {
-                            CodeTypeReference type = new CodeTypeReference();
-                            type.BaseType = "List<" + property.Type.BaseType + ">";
+                            CodeTypeReference type = new CodeTypeReference(typeof(List<>))
+                            {
+                                TypeArguments =
+                                {
+                                    property.Type
+                                }
+                            };
+
                             property.Type = type;
                         }
 
