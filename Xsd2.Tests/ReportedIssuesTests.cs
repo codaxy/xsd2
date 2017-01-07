@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using PetaTest;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2.Tests
 {
     [TestFixture(Active=false)]
@@ -16,8 +18,8 @@ namespace Xsd2.Tests
         public void UppercaseNullablePropertiesAreGenerated()
         {
             var options = new XsdCodeGeneratorOptions
-            {                
-                CapitalizeProperties = true,
+            {
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2
 {
     public class XsdCodeGeneratorOptions
@@ -10,9 +12,9 @@ namespace Xsd2
             Language = XsdCodeGeneratorOutputLanguage.CS;
         }
 
+        public ICapitalizer PropertyNameCapitalizer { get; set; }
+        public ICapitalizer EnumValueCapitalizer { get; set; }
         public bool UseLists { get; set; }
-        public bool CapitalizeProperties { get; set; }
-        public bool CapitalizeEnumValues { get; set; }
         public bool StripDebuggerStepThroughAttribute { get; set; }
         public bool StripPclIncompatibleAttributes { get; set; }
         public bool HideUnderlyingNullableProperties { get; set; }

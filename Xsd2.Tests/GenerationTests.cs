@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using PetaTest;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2.Tests
 {
     [TestFixture]
@@ -17,7 +19,7 @@ namespace Xsd2.Tests
             var options = new XsdCodeGeneratorOptions
             {
                 Imports = new List<string>() { @"Schemas\MetaConfig.xsd" },
-                CapitalizeProperties = true,
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
@@ -36,8 +38,8 @@ namespace Xsd2.Tests
         public void Test2()
         {
             var options = new XsdCodeGeneratorOptions
-            {                
-                CapitalizeProperties = true,
+            {
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,
@@ -57,7 +59,7 @@ namespace Xsd2.Tests
         {
             var options = new XsdCodeGeneratorOptions
             {
-                CapitalizeProperties = true,
+                PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                 OutputNamespace = "XSD2",
                 UseLists = true,
                 UseNullableTypes = true,

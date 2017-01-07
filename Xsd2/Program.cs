@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2
 {
     class Program
@@ -15,7 +17,6 @@ namespace Xsd2
                     UseNullableTypes = false,
                     OutputNamespace = "Xsd2",
                     UseLists = false,
-                    CapitalizeProperties = false,
                     StripDebuggerStepThroughAttribute = false,
                     MixedContent = false,
                     ExcludeImportedTypes = false,
@@ -39,8 +40,8 @@ namespace Xsd2
                     { "lists", "Use lists", s => options.UseLists = s != null },
                     { "strip-debug-attributes", "Strip debug attributes", s => options.StripDebuggerStepThroughAttribute = s != null },
                     { "pcl", "Target a PCL", s => options.StripPclIncompatibleAttributes = s != null },
-                    { "capitalize", "Capitalize properties", s => options.CapitalizeProperties = s != null },
-                    { "capitalize-enum-values", "Capitalize enum values", s => options.CapitalizeEnumValues = s != null },
+                    { "capitalize:", "Capitalize properties", s => options.PropertyNameCapitalizer = GetCapitalizer(s) },
+                    { "capitalize-enum-values:", "Capitalize enum values", s => options.EnumValueCapitalizer = GetCapitalizer(s) },
                     { "mixed", "Support mixed content", s => options.MixedContent = s != null },
                     { "n|ns|namespace=", "Sets the output namespace", s => options.OutputNamespace = s },
                     { "import=", "Adds import", s => options.Imports.Add(s) },
@@ -48,7 +49,11 @@ namespace Xsd2
                     { "ei|exclude-imports", "Exclude imported types", s => options.ExcludeImportedTypes = s != null },
                     { "ein|exclude-imports-by-name", "Exclude imported types by name", s => options.ExcludeImportedTypes = options.ExcludeImportedTypesByNameAndNamespace = s != null },
                     { "nullable", "Use nullable types", s => options.UseNullableTypes = options.HideUnderlyingNullableProperties = s != null },
-                    { "all", "Enable all flags", s => options.CapitalizeProperties = options.StripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null },
+                    { "all", "Enable all flags", s =>
+                    {
+                        options.StripDebuggerStepThroughAttribute = options.UseLists = options.UseNullableTypes = options.ExcludeImportedTypes = options.MixedContent = s != null;
+                        options.PropertyNameCapitalizer = new FirstCharacterCapitalizer();
+                    } },
                     { "combine:", "Combine output to a single file", s => { combine = true; outputFileName = s; } },
                     { "c|classes", "Generates classes for the schema", s => { }, true },
                     { "nologo", "Suppresses application banner", s => { }, true },
@@ -109,6 +114,24 @@ namespace Xsd2
             }
 
             return 0;
+        }
+
+        private static ICapitalizer GetCapitalizer(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return new FirstCharacterCapitalizer();
+
+            switch (name)
+            {
+                case "first-character":
+                case "first-char":
+                case "first":
+                    return new FirstCharacterCapitalizer();
+                case "none":
+                    return new NoneCapitalizer();
+            }
+            
+            throw new NotSupportedException(string.Format("There is no capitalizer associated with the name {0}", name));
         }
     }
 }

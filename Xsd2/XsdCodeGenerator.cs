@@ -15,6 +15,8 @@ using System.Diagnostics;
 
 using Microsoft.VisualBasic;
 
+using Xsd2.Capitalizers;
+
 namespace Xsd2
 {
     public class XsdCodeGenerator
@@ -31,7 +33,7 @@ namespace Xsd2
                 Options = new XsdCodeGeneratorOptions
                 {
                     UseLists = true,
-                    CapitalizeProperties = true,
+                    PropertyNameCapitalizer = new FirstCharacterCapitalizer(),
                     StripDebuggerStepThroughAttribute = true,
                     OutputNamespace = "Xsd2",
                     UseNullableTypes = true
@@ -375,12 +377,13 @@ namespace Xsd2
                             field.Type = type;
                         }
 
-                        if (codeType.IsEnum && Options.CapitalizeEnumValues)
+                        if (codeType.IsEnum && Options.EnumValueCapitalizer != null)
                         {
-                            if (Char.IsLower(member.Name[0]))
+                            var newName = Options.EnumValueCapitalizer.Capitalize(member.Name);
+                            if (newName != member.Name)
                             {
                                 member.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlEnumAttribute", new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(member.Name) }));
-                                member.Name = Char.ToUpper(member.Name[0]) + member.Name.Substring(1);
+                                member.Name = newName;
                             }
                         }
                     }
@@ -511,7 +514,7 @@ namespace Xsd2
                                 property.SetStatements.Add(new CodeMethodInvokeExpression(new CodeThisReferenceExpression(), "RaisePropertyChanged", new CodePrimitiveExpression(property.Name)));
                             }
 
-                            capitalizeProperty = Options.CapitalizeProperties;
+                            capitalizeProperty = Options.PropertyNameCapitalizer != null;
                         }
                         else if (!Options.UseNullableTypes)
                         {
@@ -520,7 +523,7 @@ namespace Xsd2
                                 property.SetStatements.Add(new CodeMethodInvokeExpression(new CodeThisReferenceExpression(), "RaisePropertyChanged", new CodePrimitiveExpression(property.Name)));
                             }
 
-                            capitalizeProperty = Options.CapitalizeProperties;
+                            capitalizeProperty = Options.PropertyNameCapitalizer != null;
                         }
                         else
                         {
@@ -529,7 +532,8 @@ namespace Xsd2
 
                         if (capitalizeProperty)
                         {
-                            if (Char.IsLower(property.Name[0]))
+                            var newName = Options.PropertyNameCapitalizer.Capitalize(property.Name);
+                            if (newName != property.Name)
                             {
                                 bool attributed = false;
                                 foreach (CodeAttributeDeclaration attribute in property.CustomAttributes)
@@ -551,8 +555,7 @@ namespace Xsd2
 
                                 if (!attributed)
                                     property.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlElementAttribute", new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) }));
-
-                                property.Name = property.Name.Substring(0, 1).ToUpper() + property.Name.Substring(1);
+                                property.Name = newName;
                             }
                         }
                     }
