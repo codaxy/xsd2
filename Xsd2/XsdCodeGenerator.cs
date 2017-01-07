@@ -70,11 +70,11 @@ namespace Xsd2
                     inputs.Add(xsd);
                 }
             }
-            
+
             xsds.Compile(null, true);
-            
+
             XmlSchemaImporter schemaImporter = new XmlSchemaImporter(xsds);
-          
+
 
             // create the codedom
             CodeNamespace codeNamespace = new CodeNamespace(Options.OutputNamespace);
@@ -188,7 +188,7 @@ namespace Xsd2
             //fallback: Check if the namespace attribute of the type equals the namespace of the file.
             //first, find the XmlType attribute.
             var ns = ExtractNamespace(type);
-            if (ns!=null && ns != schema.TargetNamespace)
+            if (ns != null && ns != schema.TargetNamespace)
                 return false;
 
             if (!Options.ExcludeImportedTypesByNameAndNamespace)
@@ -238,7 +238,7 @@ namespace Xsd2
                     {
                         if (argument.Name == "Namespace")
                         {
-                           return (string)((CodePrimitiveExpression)argument.Value).Value;
+                            return (string)((CodePrimitiveExpression)argument.Value).Value;
                         }
                     }
                 }
@@ -382,7 +382,7 @@ namespace Xsd2
                             var newName = Options.EnumValueCapitalizer.Capitalize(member.Name);
                             if (newName != member.Name)
                             {
-                                member.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlEnumAttribute", new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(member.Name) }));
+                                SetAttributeOriginalName(member, member.Name, "System.Xml.Serialization.XmlEnumAttribute");
                                 member.Name = newName;
                             }
                         }
@@ -428,7 +428,7 @@ namespace Xsd2
                                     var nullableProperty = new CodeMemberProperty
                                     {
                                         Name = property.Name,
-                                        Type = new CodeTypeReference(typeof(Nullable<>)) {TypeArguments = { property.Type.BaseType } },
+                                        Type = new CodeTypeReference(typeof(Nullable<>)) { TypeArguments = { property.Type.BaseType } },
                                         HasGet = true,
                                         HasSet = true,
                                         Attributes = MemberAttributes.Public | MemberAttributes.Final
@@ -436,8 +436,8 @@ namespace Xsd2
 
                                     nullableProperty.GetStatements.Add(
                                         new CodeConditionStatement(new CodeVariableReferenceExpression(fieldName + "Specified"),
-                                            new CodeStatement[] {new CodeMethodReturnStatement(new CodeVariableReferenceExpression(fieldName))},
-                                            new CodeStatement[] {new CodeMethodReturnStatement(new CodePrimitiveExpression())}
+                                            new CodeStatement[] { new CodeMethodReturnStatement(new CodeVariableReferenceExpression(fieldName)) },
+                                            new CodeStatement[] { new CodeMethodReturnStatement(new CodePrimitiveExpression()) }
                                         ));
 
                                     nullableProperty.SetStatements.Add(
@@ -535,26 +535,7 @@ namespace Xsd2
                             var newName = Options.PropertyNameCapitalizer.Capitalize(property.Name);
                             if (newName != property.Name)
                             {
-                                bool attributed = false;
-                                foreach (CodeAttributeDeclaration attribute in property.CustomAttributes)
-                                {
-                                    switch (attribute.Name)
-                                    {
-                                        case "System.Xml.Serialization.XmlAttributeAttribute":
-                                            attributed = true;
-                                            attribute.Arguments.Add(new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) });
-                                            break;
-
-                                        case "System.Xml.Serialization.XmlIgnoreAttribute":
-                                        case "System.Xml.Serialization.XmlElementAttribute":
-                                        case "System.Xml.Serialization.XmlArrayItemAttribute":
-                                            attributed = true;
-                                            break;
-                                    }
-                                }
-
-                                if (!attributed)
-                                    property.CustomAttributes.Add(new CodeAttributeDeclaration("System.Xml.Serialization.XmlElementAttribute", new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(property.Name) }));
+                                SetAttributeOriginalName(property, property.Name, "System.Xml.Serialization.XmlElementAttribute");
                                 property.Name = newName;
                             }
                         }
@@ -564,6 +545,60 @@ namespace Xsd2
 
             foreach (var rt in removedTypes)
                 codeNamespace.Types.Remove(rt);
+        }
+
+        private static void SetAttributeOriginalName(CodeTypeMember member, string originalName, string newAttributeType)
+        {
+            var elementIgnored = false;
+            var attributesThatNeedName = new List<CodeAttributeDeclaration>();
+            foreach (CodeAttributeDeclaration attribute in member.CustomAttributes)
+            {
+                switch (attribute.Name)
+                {
+                    case "System.Xml.Serialization.XmlIgnoreAttribute":
+                        elementIgnored = true;
+                        break;
+                    case "System.Xml.Serialization.XmlAttributeAttribute":
+                    case "System.Xml.Serialization.XmlElementAttribute":
+                    case "System.Xml.Serialization.XmlArrayItemAttribute":
+                    case "System.Xml.Serialization.XmlEnumAttribute":
+                    case "System.Xml.Serialization.XmlRootAttribute":
+                        attributesThatNeedName.Add(attribute);
+                        break;
+                }
+            }
+
+            if (elementIgnored)
+                return;
+
+            if (attributesThatNeedName.Count == 0)
+            {
+                var attribute = new CodeAttributeDeclaration(newAttributeType);
+                attributesThatNeedName.Add(attribute);
+                member.CustomAttributes.Add(attribute);
+            }
+
+            var nameArgument = new CodeAttributeArgument { Name = "", Value = new CodePrimitiveExpression(originalName) };
+
+            foreach (var attribute in attributesThatNeedName)
+            {
+                var hasNameAttribute = attribute.Arguments.Cast<CodeAttributeArgument>().Any(IsNameArgument);
+                if (!hasNameAttribute)
+                    attribute.Arguments.Insert(0, nameArgument);
+            }
+        }
+
+        private static bool IsNameArgument(CodeAttributeArgument argument)
+        {
+            if (string.IsNullOrEmpty(argument.Name))
+            {
+                var expr = argument.Value as CodePrimitiveExpression;
+                if (expr == null)
+                    return false;
+                return expr.Value is string;
+            }
+
+            return argument.Name == "Name";
         }
 
         private static string GetFieldName(string p, string suffix = null)
