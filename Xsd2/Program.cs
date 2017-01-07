@@ -28,6 +28,7 @@ namespace Xsd2
                 var combine = false;
                 string outputFileName = null;
                 var help = false;
+                var pclTarget = false;
 
                 var optionSet = new Mono.Options.OptionSet()
                 {
@@ -39,7 +40,9 @@ namespace Xsd2
                     { "edb|enableDataBinding", "Implements INotifyPropertyChanged for all types", s => options.EnableDataBinding = s != null },
                     { "lists", "Use lists", s => options.UseLists = s != null },
                     { "strip-debug-attributes", "Strip debug attributes", s => options.StripDebuggerStepThroughAttribute = s != null },
-                    { "pcl", "Target a PCL", s => options.StripPclIncompatibleAttributes = s != null },
+                    { "xl|xlinq", s => options.UseXLinq = s != null },
+                    { "ra|remove-attribute=", s => options.AttributesToRemove.Add(s) },
+                    { "pcl", "Target a PCL", s => pclTarget = s != null },
                     { "cp|capitalize:", "Capitalize properties", s => options.PropertyNameCapitalizer = GetCapitalizer(s) },
                     { "ct|capitalize-types:", "Capitalize types", s => options.TypeNameCapitalizer = GetCapitalizer(s) },
                     { "ce|capitalize-enum-values:", "Capitalize enum values", s => options.EnumValueCapitalizer = GetCapitalizer(s) },
@@ -66,6 +69,13 @@ namespace Xsd2
                     Console.Error.WriteLine("Xsd2 [options] schema.xsd ...");
                     optionSet.WriteOptionDescriptions(Console.Error);
                     return 1;
+                }
+
+                if (pclTarget)
+                {
+                    options.UseXLinq = true;
+                    options.AttributesToRemove.Add("System.SerializableAttribute");
+                    options.AttributesToRemove.Add("System.ComponentModel.DesignerCategoryAttribute");
                 }
 
                 var generator = new XsdCodeGenerator() { Options = options };

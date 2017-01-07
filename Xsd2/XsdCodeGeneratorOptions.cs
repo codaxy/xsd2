@@ -10,14 +10,16 @@ namespace Xsd2
         public XsdCodeGeneratorOptions()
         {
             Language = XsdCodeGeneratorOutputLanguage.CS;
+            AttributesToRemove = new HashSet<string>();
         }
 
         public ICapitalizer PropertyNameCapitalizer { get; set; }
         public ICapitalizer EnumValueCapitalizer { get; set; }
         public ICapitalizer TypeNameCapitalizer { get; set; }
+        public HashSet<string> AttributesToRemove { get; set; }
+        public bool UseXLinq { get; set; }
         public bool UseLists { get; set; }
         public bool StripDebuggerStepThroughAttribute { get; set; }
-        public bool StripPclIncompatibleAttributes { get; set; }
         public bool HideUnderlyingNullableProperties { get; set; }
         public bool UseNullableTypes { get; set; }
         public List<String> Imports { get; set; }

@@ -272,6 +272,13 @@ namespace Xsd2
 
             var changedTypeNames = new Dictionary<string, string>();
 
+            if (Options.UseXLinq)
+            {
+                changedTypeNames.Add("System.Xml.XmlNode", "System.Xml.Linq.XNode");
+                changedTypeNames.Add("System.Xml.XmlElement", "System.Xml.Linq.XElement");
+                changedTypeNames.Add("System.Xml.XmlAttribute", "System.Xml.Linq.XAttribute");
+            }
+
             foreach (CodeTypeDeclaration codeType in codeNamespace.Types)
             {
                 if (Options.ExcludeImportedTypes && Options.Imports != null && Options.Imports.Count > 0)
@@ -294,17 +301,12 @@ namespace Xsd2
                     }
                 }
 
-                if (Options.StripPclIncompatibleAttributes)
+                if (Options.AttributesToRemove.Count != 0)
                 {
                     foreach (CodeAttributeDeclaration att in codeType.CustomAttributes)
                     {
-                        switch (att.Name)
-                        {
-                            case "System.SerializableAttribute":
-                            case "System.ComponentModel.DesignerCategoryAttribute":
-                                attributesToRemove.Add(att);
-                                break;
-                        }
+                        if (Options.AttributesToRemove.Contains(att.Name))
+                            attributesToRemove.Add(att);
                     }
                 }
 
