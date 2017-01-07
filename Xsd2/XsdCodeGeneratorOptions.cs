@@ -14,6 +14,7 @@ namespace Xsd2
 
         public ICapitalizer PropertyNameCapitalizer { get; set; }
         public ICapitalizer EnumValueCapitalizer { get; set; }
+        public ICapitalizer TypeNameCapitalizer { get; set; }
         public bool UseLists { get; set; }
         public bool StripDebuggerStepThroughAttribute { get; set; }
         public bool StripPclIncompatibleAttributes { get; set; }

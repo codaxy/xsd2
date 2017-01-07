@@ -270,6 +270,8 @@ namespace Xsd2
 
             var removedTypes = new List<CodeTypeDeclaration>();
 
+            var changedTypeNames = new Dictionary<string, string>();
+
             foreach (CodeTypeDeclaration codeType in codeNamespace.Types)
             {
                 if (Options.ExcludeImportedTypes && Options.Imports != null && Options.Imports.Count > 0)
@@ -309,6 +311,17 @@ namespace Xsd2
                 foreach (var att in attributesToRemove)
                 {
                     codeType.CustomAttributes.Remove(att);
+                }
+
+                if (Options.TypeNameCapitalizer != null)
+                {
+                    var newName = Options.TypeNameCapitalizer.Capitalize(codeType.Name);
+                    if (newName != codeType.Name)
+                    {
+                        SetAttributeOriginalName(codeType, codeType.Name, "System.Xml.Serialization.XmlTypeAttribute");
+                        changedTypeNames.Add(codeType.Name, newName);
+                        codeType.Name = newName;
+                    }
                 }
 
                 var members = new Dictionary<string, CodeTypeMember>();
@@ -543,8 +556,67 @@ namespace Xsd2
                 }
             }
 
+            // Remove types
             foreach (var rt in removedTypes)
                 codeNamespace.Types.Remove(rt);
+
+            // Fixup changed type names
+            if (changedTypeNames.Count != 0)
+            {
+                foreach (CodeTypeDeclaration codeType in codeNamespace.Types)
+                {
+                    if (codeType.IsEnum)
+                        continue;
+
+                    FixAttributeTypeReference(changedTypeNames, codeType);
+
+                    foreach (CodeTypeMember member in codeType.Members)
+                    {
+                        var memberField = member as CodeMemberField;
+                        if (memberField != null)
+                        {
+                            FixTypeReference(changedTypeNames, memberField.Type);
+                            FixAttributeTypeReference(changedTypeNames, memberField);
+                        }
+
+                        var memberProperty = member as CodeMemberProperty;
+                        if (memberProperty != null)
+                        {
+                            FixTypeReference(changedTypeNames, memberProperty.Type);
+                            FixAttributeTypeReference(changedTypeNames, memberProperty);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void FixAttributeTypeReference(IReadOnlyDictionary<string, string> changedTypeNames, CodeTypeMember member)
+        {
+            foreach (CodeAttributeDeclaration attribute in member.CustomAttributes)
+            {
+                foreach (CodeAttributeArgument argument in attribute.Arguments)
+                {
+                    var typeOfExpr = argument.Value as CodeTypeOfExpression;
+                    if (typeOfExpr != null)
+                    {
+                        FixTypeReference(changedTypeNames, typeOfExpr.Type);
+                    }
+                }
+            }
+        }
+
+        private static void FixTypeReference(IReadOnlyDictionary<string, string> changedTypeNames, CodeTypeReference typeReference)
+        {
+            string newTypeName;
+            if (!string.IsNullOrEmpty(typeReference.BaseType) && changedTypeNames.TryGetValue(typeReference.BaseType, out newTypeName))
+            {
+                typeReference.BaseType = newTypeName;
+            }
+
+            if (typeReference.ArrayElementType != null && changedTypeNames.TryGetValue(typeReference.ArrayElementType.BaseType, out newTypeName))
+            {
+                typeReference.ArrayElementType.BaseType = newTypeName;
+            }
         }
 
         private static void SetAttributeOriginalName(CodeTypeMember member, string originalName, string newAttributeType)
@@ -563,6 +635,7 @@ namespace Xsd2
                     case "System.Xml.Serialization.XmlArrayItemAttribute":
                     case "System.Xml.Serialization.XmlEnumAttribute":
                     case "System.Xml.Serialization.XmlRootAttribute":
+                    case "System.Xml.Serialization.XmlTypeAttribute":
                         attributesThatNeedName.Add(attribute);
                         break;
                 }
