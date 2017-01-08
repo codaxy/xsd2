@@ -650,7 +650,6 @@ namespace Xsd2
         private static void SetAttributeOriginalName(CodeTypeMember member, string originalName, string newAttributeType)
         {
             var elementIgnored = false;
-            var isAnonymous = false;
             var attributesThatNeedName = new List<CodeAttributeDeclaration>();
             foreach (CodeAttributeDeclaration attribute in member.CustomAttributes)
             {
@@ -663,23 +662,14 @@ namespace Xsd2
                     case "System.Xml.Serialization.XmlElementAttribute":
                     case "System.Xml.Serialization.XmlArrayItemAttribute":
                     case "System.Xml.Serialization.XmlEnumAttribute":
+                    case "System.Xml.Serialization.XmlTypeAttribute":
                     case "System.Xml.Serialization.XmlRootAttribute":
                         attributesThatNeedName.Add(attribute);
-                        break;
-                    case "System.Xml.Serialization.XmlTypeAttribute":
-                        if (!attribute.IsAnonymousTypeArgument())
-                        {
-                            attributesThatNeedName.Add(attribute);
-                        }
-                        else
-                        {
-                            isAnonymous = true;
-                        }
                         break;
                 }
             }
 
-            if (elementIgnored || isAnonymous)
+            if (elementIgnored)
                 return;
 
             if (attributesThatNeedName.Count == 0)
@@ -693,6 +683,14 @@ namespace Xsd2
 
             foreach (var attribute in attributesThatNeedName)
             {
+                switch (attribute.Name)
+                {
+                    case "System.Xml.Serialization.XmlTypeAttribute":
+                        if (attribute.IsAnonymousTypeArgument())
+                            continue;
+                        break;
+                }
+
                 var hasNameAttribute = attribute.Arguments.Cast<CodeAttributeArgument>().Any(x => x.IsNameArgument());
                 if (!hasNameAttribute)
                     attribute.Arguments.Insert(0, nameArgument);
