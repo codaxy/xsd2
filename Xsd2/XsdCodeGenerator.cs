@@ -405,7 +405,7 @@ namespace Xsd2
                             {
                                 TypeArguments =
                                 {
-                                    field.Type
+                                    field.Type.ArrayElementType
                                 }
                             };
 
@@ -450,7 +450,7 @@ namespace Xsd2
                             {
                                 TypeArguments =
                                 {
-                                    property.Type
+                                    property.Type.ArrayElementType
                                 }
                             };
 
