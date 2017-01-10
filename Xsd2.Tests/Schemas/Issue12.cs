@@ -8,7 +8,6 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd", IsNullable=true)]
     public partial class UpperCaseType {
         
         private int valueField;
@@ -64,7 +63,6 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd", IsNullable=true)]
     public partial class LowerCaseType {
         
         private int valueField;

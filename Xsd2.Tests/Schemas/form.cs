@@ -178,7 +178,6 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://example.org/Form.xsd", IsNullable=true)]
     public partial class Element {
     }
     
@@ -235,14 +234,13 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://example.org/Form.xsd", IsNullable=true)]
     public partial class Container : Element {
         
-        private List<Field> itemsField;
+        private System.Collections.Generic.List<Field> itemsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("field")]
-        public List<Field> Items {
+        public System.Collections.Generic.List<Field> Items {
             get {
                 return this.itemsField;
             }
@@ -257,15 +255,14 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://example.org/Form.xsd", IsNullable=true)]
     public partial class MixedContainer : Element {
         
-        private List<System.Object> itemsField;
+        private System.Collections.Generic.List<object> itemsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("field")]
         [System.Xml.Serialization.XmlTextAttribute(typeof(string))]
-        public List<System.Object> Items {
+        public System.Collections.Generic.List<object> Items {
             get {
                 return this.itemsField;
             }
