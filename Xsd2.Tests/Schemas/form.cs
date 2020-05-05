@@ -1,4 +1,5 @@
-namespace Xsd2 {
+namespace Xsd2
+{
     using System;
     using System.Collections.Generic;
     
@@ -9,7 +10,8 @@ namespace Xsd2 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
     [System.Xml.Serialization.XmlRootAttribute("field", Namespace="http://example.org/Form.xsd", IsNullable=false)]
-    public partial class Field : Element {
+    public partial class Field : Element
+    {
         
         private string nameField;
         
@@ -25,50 +27,63 @@ namespace Xsd2 {
         
         private bool alignFieldSpecified;
         
-        public Field() {
+        public Field()
+        {
             this.writeField = false;
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("name")]
-        public string Name {
-            get {
+        public string Name
+        {
+            get
+            {
                 return this.nameField;
             }
-            set {
+            set
+            {
                 this.nameField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("label")]
-        public string Label {
-            get {
+        public string Label
+        {
+            get
+            {
                 return this.labelField;
             }
-            set {
+            set
+            {
                 this.labelField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName="minLength")]
-        public int _minLength {
-            get {
+        public int _minLength
+        {
+            get
+            {
                 return this.minLengthField;
             }
-            set {
+            set
+            {
                 this.minLengthField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool _minLengthSpecified {
-            get {
+        public bool _minLengthSpecified
+        {
+            get
+            {
                 return this.minLengthFieldSpecified;
             }
-            set {
+            set
+            {
                 this.minLengthFieldSpecified = value;
             }
         }
@@ -76,74 +91,97 @@ namespace Xsd2 {
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("write")]
         [System.ComponentModel.DefaultValueAttribute(false)]
-        public bool Write {
-            get {
+        public bool Write
+        {
+            get
+            {
                 return this.writeField;
             }
-            set {
+            set
+            {
                 this.writeField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName="align")]
-        public Align _align {
-            get {
+        public Align _align
+        {
+            get
+            {
                 return this.alignField;
             }
-            set {
+            set
+            {
                 this.alignField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool _alignSpecified {
-            get {
+        public bool _alignSpecified
+        {
+            get
+            {
                 return this.alignFieldSpecified;
             }
-            set {
+            set
+            {
                 this.alignFieldSpecified = value;
             }
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public System.Nullable<int> MinLength {
-            get {
-                if (minLengthFieldSpecified) {
+        public System.Nullable<int> MinLength
+        {
+            get
+            {
+                if (minLengthFieldSpecified)
+                {
                     return minLengthField;
                 }
-                else {
+                else
+                {
                     return null;
                 }
             }
-            set {
-                if ((value != null)) {
+            set
+            {
+                if ((value != null))
+                {
                     minLengthFieldSpecified = true;
                     minLengthField = value.Value;
                 }
-                else {
+                else
+                {
                     minLengthFieldSpecified = false;
                 }
             }
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public System.Nullable<Align> Align {
-            get {
-                if (alignFieldSpecified) {
+        public System.Nullable<Align> Align
+        {
+            get
+            {
+                if (alignFieldSpecified)
+                {
                     return alignField;
                 }
-                else {
+                else
+                {
                     return null;
                 }
             }
-            set {
-                if ((value != null)) {
+            set
+            {
+                if ((value != null))
+                {
                     alignFieldSpecified = true;
                     alignField = value.Value;
                 }
-                else {
+                else
+                {
                     alignFieldSpecified = false;
                 }
             }
@@ -155,7 +193,8 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
     [System.Xml.Serialization.XmlRootAttribute(Namespace="http://example.org/Form.xsd", IsNullable=false)]
-    public enum Align {
+    public enum Align
+    {
         
         /// <remarks/>
         auto,
@@ -178,7 +217,8 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    public partial class Element {
+    public partial class Element
+    {
     }
     
     /// <remarks/>
@@ -187,7 +227,8 @@ namespace Xsd2 {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
     [System.Xml.Serialization.XmlRootAttribute("form", Namespace="http://example.org/Form.xsd", IsNullable=false)]
-    public partial class Form {
+    public partial class Form
+    {
         
         private Container itemsField;
         
@@ -197,33 +238,42 @@ namespace Xsd2 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("items")]
-        public Container Items {
-            get {
+        public Container Items
+        {
+            get
+            {
                 return this.itemsField;
             }
-            set {
+            set
+            {
                 this.itemsField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("name")]
-        public string Name {
-            get {
+        public string Name
+        {
+            get
+            {
                 return this.nameField;
             }
-            set {
+            set
+            {
                 this.nameField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute("description")]
-        public string Description {
-            get {
+        public string Description
+        {
+            get
+            {
                 return this.descriptionField;
             }
-            set {
+            set
+            {
                 this.descriptionField = value;
             }
         }
@@ -234,17 +284,21 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    public partial class Container : Element {
+    public partial class Container : Element
+    {
         
         private System.Collections.Generic.List<Field> itemsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("field")]
-        public System.Collections.Generic.List<Field> Items {
-            get {
+        public System.Collections.Generic.List<Field> Items
+        {
+            get
+            {
                 return this.itemsField;
             }
-            set {
+            set
+            {
                 this.itemsField = value;
             }
         }
@@ -255,18 +309,22 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://example.org/Form.xsd")]
-    public partial class MixedContainer : Element {
+    public partial class MixedContainer : Element
+    {
         
         private System.Collections.Generic.List<object> itemsField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("field")]
         [System.Xml.Serialization.XmlTextAttribute(typeof(string))]
-        public System.Collections.Generic.List<object> Items {
-            get {
+        public System.Collections.Generic.List<object> Items
+        {
+            get
+            {
                 return this.itemsField;
             }
-            set {
+            set
+            {
                 this.itemsField = value;
             }
         }

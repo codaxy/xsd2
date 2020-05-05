@@ -155,7 +155,11 @@ namespace Xsd2
                     break;
             }
 
-            codeProvider.GenerateCodeFromNamespace(codeNamespace, output, new CodeGeneratorOptions());
+            var codeGeneratorOptions = new CodeGeneratorOptions()
+            {
+                BracingStyle = "C",
+            };
+            codeProvider.GenerateCodeFromNamespace(codeNamespace, output, codeGeneratorOptions);
         }
 
         private void ImportImportedSchema(string schemaFilePath)
