@@ -1,4 +1,5 @@
-namespace Xsd2 {
+namespace Xsd2
+{
     using System;
     using System.Collections.Generic;
     
@@ -8,7 +9,8 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd")]
-    public partial class UpperCaseType {
+    public partial class UpperCaseType
+    {
         
         private int valueField;
         
@@ -16,42 +18,55 @@ namespace Xsd2 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName="Value")]
-        public int _Value {
-            get {
+        public int _Value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool _ValueSpecified {
-            get {
+        public bool _ValueSpecified
+        {
+            get
+            {
                 return this.valueFieldSpecified;
             }
-            set {
+            set
+            {
                 this.valueFieldSpecified = value;
             }
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public System.Nullable<int> Value {
-            get {
-                if (valueFieldSpecified) {
+        public System.Nullable<int> Value
+        {
+            get
+            {
+                if (valueFieldSpecified)
+                {
                     return valueField;
                 }
-                else {
+                else
+                {
                     return null;
                 }
             }
-            set {
-                if ((value != null)) {
+            set
+            {
+                if ((value != null))
+                {
                     valueFieldSpecified = true;
                     valueField = value.Value;
                 }
-                else {
+                else
+                {
                     valueFieldSpecified = false;
                 }
             }
@@ -63,7 +78,8 @@ namespace Xsd2 {
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://codaxy.com/xsd2/Test.xsd")]
-    public partial class LowerCaseType {
+    public partial class LowerCaseType
+    {
         
         private int valueField;
         
@@ -75,85 +91,111 @@ namespace Xsd2 {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(AttributeName="value")]
-        public int _value {
-            get {
+        public int _value
+        {
+            get
+            {
                 return this.valueField;
             }
-            set {
+            set
+            {
                 this.valueField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool _valueSpecified {
-            get {
+        public bool _valueSpecified
+        {
+            get
+            {
                 return this.valueFieldSpecified;
             }
-            set {
+            set
+            {
                 this.valueFieldSpecified = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute(DataType="date", AttributeName="date")]
-        public System.DateTime _date {
-            get {
+        public System.DateTime _date
+        {
+            get
+            {
                 return this.dateField;
             }
-            set {
+            set
+            {
                 this.dateField = value;
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool _dateSpecified {
-            get {
+        public bool _dateSpecified
+        {
+            get
+            {
                 return this.dateFieldSpecified;
             }
-            set {
+            set
+            {
                 this.dateFieldSpecified = value;
             }
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public System.Nullable<int> Value {
-            get {
-                if (valueFieldSpecified) {
+        public System.Nullable<int> Value
+        {
+            get
+            {
+                if (valueFieldSpecified)
+                {
                     return valueField;
                 }
-                else {
+                else
+                {
                     return null;
                 }
             }
-            set {
-                if ((value != null)) {
+            set
+            {
+                if ((value != null))
+                {
                     valueFieldSpecified = true;
                     valueField = value.Value;
                 }
-                else {
+                else
+                {
                     valueFieldSpecified = false;
                 }
             }
         }
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public System.Nullable<System.DateTime> Date {
-            get {
-                if (dateFieldSpecified) {
+        public System.Nullable<System.DateTime> Date
+        {
+            get
+            {
+                if (dateFieldSpecified)
+                {
                     return dateField;
                 }
-                else {
+                else
+                {
                     return null;
                 }
             }
-            set {
-                if ((value != null)) {
+            set
+            {
+                if ((value != null))
+                {
                     dateFieldSpecified = true;
                     dateField = value.Value;
                 }
-                else {
+                else
+                {
                     dateFieldSpecified = false;
                 }
             }
