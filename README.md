@@ -17,6 +17,7 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
 
 ### Example running for embedding in your CSPROJ (C# project):
 
+```xml
   <ItemGroup>
     <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
   </ItemGroup>
@@ -44,7 +45,7 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
     </ItemGroup>
     <Delete Files="@(_FilesToDelete)"/>
   </Target>
-
+```
 
 ## Notes:
 
