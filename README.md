@@ -18,9 +18,11 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
 ### Example running for embedding in your CSPROJ (C# project):
 
 ```xml
-  <ItemGroup>
-    <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
-  </ItemGroup>
+  <PropertyGroup>
+    <!-- XsdFilesPath points here to currelt folder. It can poing for example to external folder, like ..\..\sdk\schema\ -->
+    <XsdFilesPath>.\</XsdFilesPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="$(XsdFilesPath)**\*.xsd" />
   </ItemGroup>
