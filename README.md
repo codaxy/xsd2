@@ -34,8 +34,8 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
   </ItemGroup>
 
   <Target Name="GenerateSerializationClasses" BeforeTargets="BeforeBuild" Inputs="%(XSDFile.Identity)" Outputs="%(XSDFile.Identity).cs">
-    <Message Importance="High" Text="Generating iVision classes: %(XSDFile.Identity)" />
-    <Exec Command="$(Xsd2Exe) %(XSDFile.Identity) /o:$(ProjectDir) /ns:Indigo.Services.HardwareParts.Interfaces.IVisionSchema" />
+    <Message Importance="High" Text="Generating Schema classes: %(XSDFile.Identity)" />
+    <Exec Command="$(Xsd2Exe) %(XSDFile.Identity) /o:$(ProjectDir) /ns:SomeNamespaces.Interfaces.Schema" />
   </Target>
 
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean">
