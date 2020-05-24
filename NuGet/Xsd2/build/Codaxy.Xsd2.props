@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Xsd2Exe>"$(MSBuildThisFileDirectory)../tools/Xsd2.exe"</Xsd2Exe>
+    <Xsd2Dir>$(MSBuildThisFileDirectory)../tools/</Xsd2Dir>
+ </PropertyGroup>
+</Project>

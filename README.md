@@ -17,13 +17,34 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
 
 ### Example running for embedding in your CSPROJ (C# project):
 
-	<ItemGroup>
-		<XSDFile Include="**/*.xsd" />  
-	</ItemGroup>  
-	<Target Name=“GenerateSerializationClasses” BeforeTargets=“BeforeBuild” Inputs="%(XSDFile.Identity)" Outputs="%(XSDFile.Identity).cs">  
-		<Message Importance=“High” Text=“Generating xsd code…%(XSDFile.Identity)” />  
-		<Exec Command=“xsd2.exe %(XSDFile.Identity) /o:$(ProjectDir) /ns:My.Namespace.Example” />  
-	</Target>
+  <ItemGroup>
+    <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="*.cs">
+      <DependentUpon>$(XsdFilesPath)$([System.String]::Copy('%(Filename)').Split('.')[0]).xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="GenerateSerializationClasses" BeforeTargets="BeforeBuild" Inputs="%(XSDFile.Identity)" Outputs="%(XSDFile.Identity).cs">
+    <Message Importance="High" Text="Generating iVision classes: %(XSDFile.Identity)" />
+    <Exec Command="$(Xsd2Exe) %(XSDFile.Identity) /o:$(ProjectDir) /ns:Indigo.Services.HardwareParts.Interfaces.IVisionSchema" />
+  </Target>
+
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean">
+    <ItemGroup>
+      <_FilesToDelete Include="*.cs"/>
+    </ItemGroup>
+    <Delete Files="@(_FilesToDelete)"/>
+  </Target>
+
 
 ## Notes:
 
