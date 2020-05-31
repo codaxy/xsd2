@@ -19,7 +19,7 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
 
 ```xml
   <PropertyGroup>
-    <!-- XsdFilesPath points here to currelt folder. It can poing for example to external folder, like ..\..\sdk\schema\ -->
+    <!-- XsdFilesPath points here to current folder. It can poing for example to external folder, like ..\..\sdk\schema\ -->
     <XsdFilesPath>.\</XsdFilesPath>
   </PropertyGroup>
 
@@ -29,14 +29,19 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
   <ItemGroup>
     <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Monitor whether files are changed so the Inputs/Outputs comparision below will re-generate -->
+    <UpToDateCheckInput Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="*.cs">
-      <DependentUpon>$(XsdFilesPath)$([System.String]::Copy('%(Filename)').Split('.')[0]).xsd</DependentUpon>
+      <!-- This will make Visual Studio fold each generated file under its xsd source -->
+      <DependentUpon>$(XsdFilesPath)%(Filename).xsd</DependentUpon>
     </Compile>
   </ItemGroup>
 
-  <Target Name="GenerateSerializationClasses" BeforeTargets="BeforeBuild" Inputs="%(XSDFile.Identity)" Outputs="%(XSDFile.Identity).cs">
+  <Target Name="GenerateSerializationClasses" BeforeTargets="BeforeBuild" Inputs="@(XSDFile)" Outputs="@(XSDFile -> '%(Filename).cs')">
     <Message Importance="High" Text="Generating Schema classes: %(XSDFile.Identity)" />
     <Exec Command="$(Xsd2Exe) %(XSDFile.Identity) /o:$(ProjectDir) /ns:SomeNamespaces.Interfaces.Schema" />
   </Target>
