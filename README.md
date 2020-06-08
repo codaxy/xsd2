@@ -17,13 +17,42 @@ xsd2.exe &lt;schema file&gt; [/o:&lt;output-directory&gt;] [/ns:&lt;namespace&gt
 
 ### Example running for embedding in your CSPROJ (C# project):
 
-	<ItemGroup>
-		<XSDFile Include="**/*.xsd" />  
-	</ItemGroup>  
-	<Target Name=“GenerateSerializationClasses” BeforeTargets=“BeforeBuild” Inputs="%(XSDFile.Identity)" Outputs="%(XSDFile.Identity).cs">  
-		<Message Importance=“High” Text=“Generating xsd code…%(XSDFile.Identity)” />  
-		<Exec Command=“xsd2.exe %(XSDFile.Identity) /o:$(ProjectDir) /ns:My.Namespace.Example” />  
-	</Target>
+```xml
+  <PropertyGroup>
+    <!-- XsdFilesPath points here to current folder. It can poing for example to external folder, like ..\..\sdk\schema\ -->
+    <XsdFilesPath>.\</XsdFilesPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <XSDFile Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Monitor whether files are changed so the Inputs/Outputs comparision below will re-generate -->
+    <UpToDateCheckInput Include="$(XsdFilesPath)**\*.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="*.cs">
+      <!-- This will make Visual Studio fold each generated file under its xsd source -->
+      <DependentUpon>$(XsdFilesPath)%(Filename).xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="GenerateSerializationClasses" BeforeTargets="BeforeBuild" Inputs="@(XSDFile)" Outputs="@(XSDFile -> '%(Filename).cs')">
+    <Message Importance="High" Text="Generating Schema classes: %(XSDFile.Identity)" />
+    <Exec Command="$(Xsd2Exe) %(XSDFile.Identity) /o:$(ProjectDir) /ns:SomeNamespaces.Interfaces.Schema" />
+  </Target>
+
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean">
+    <ItemGroup>
+      <_FilesToDelete Include="*.cs"/>
+    </ItemGroup>
+    <Delete Files="@(_FilesToDelete)"/>
+  </Target>
+```
 
 ## Notes:
 

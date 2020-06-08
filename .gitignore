@@ -109,3 +109,8 @@ Backup*/
 UpgradeLog*.XML
 /.vs
 /.vs
+
+# Files being created automatically by Fody nuget restore
+/Xsd2/FodyWeavers.xsd
+/Xsd2/FodyWeavers.xml
+

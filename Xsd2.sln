@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1145
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xsd2", "Xsd2\Xsd2.csproj", "{DA8B62EC-38DE-4B74-842F-F61F29727797}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xsd2", "Xsd2\Xsd2.csproj", "{DA8B62EC-38DE-4B74-842F-F61F29727797}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xsd2.Tests", "Xsd2.Tests\Xsd2.Tests.csproj", "{3F84D0B1-BB63-4B82-A1D9-C14D53E71250}"
 EndProject
@@ -31,5 +31,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4B7FD51-0A25-48C4-9EE6-ED30C3676F84}
 	EndGlobalSection
 EndGlobal
