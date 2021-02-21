@@ -54,7 +54,7 @@ namespace Xsd2
                     }
                     else if (Directory.Exists(import))
                     {
-                        foreach (var file in Directory.GetFiles("*.xsd"))
+                        foreach (var file in Directory.GetFiles(import, "*.xsd"))
                             ImportImportedSchema(file);
                     }
                     else
