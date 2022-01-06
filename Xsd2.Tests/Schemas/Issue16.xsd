@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    targetNamespace="http://codaxy.com/xsd2/Test.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://codaxy.com/xsd2/Test.xsd"
+    xmlns:mstns="http://codaxy.com/xsd2/Test.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:complexType name="TypeWithCustomElement">
+	  <xs:sequence>
+		  <xs:element name="SomeDate" type="xs:date" minOccurs="0" />
+	  </xs:sequence>       
+  </xs:complexType>
+</xs:schema>

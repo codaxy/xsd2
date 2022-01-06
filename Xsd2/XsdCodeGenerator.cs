@@ -526,6 +526,13 @@ namespace Xsd2
                                         specified.CustomAttributes.Add(neverBrowsableAttribute);
                                     }
 
+                                    var elementAttribute = property
+                                        .CustomAttributes.Cast<CodeAttributeDeclaration>()
+                                        .Where(x => x.Name == "System.Xml.Serialization.XmlElementAttribute")
+                                        .SingleOrDefault() ?? new CodeAttributeDeclaration("System.Xml.Serialization.XmlElementAttribute");
+
+                                    elementAttribute.Arguments.Add(new CodeAttributeArgument("ElementName", new CodePrimitiveExpression(property.Name.Replace("_", ""))));
+
                                     property = nullableProperty;
                                 }
                             }
